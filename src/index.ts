@@ -1,82 +1,48 @@
-import cookieParser from "cookie-parser"
-import dotenv from "dotenv"
-import express, { Express } from "express"
-import session from 'express-session'
-import { readFileSync } from "fs"
-import http from 'http'
-import httpProxy from 'http-proxy'
-import { join } from "path"
-import serveStatic from "serve-static"
-import { createServer as createViteServer } from "vite"
-import { RiseactApp, riseactApp } from './backend/riseact-app-express'
+import express, { Express } from "express";
+import http from "http";
+import dotenv from "dotenv";
+import serveStatic from "serve-static";
+import RiseactSDK from "../../riseact-node-sdk/src/";
 
-dotenv.config()
-
-const isProd = process.env.NODE_ENV === "production"
-
-const STATIC_PATH = isProd
-  ? `${process.cwd()}/frontend/dist`
-  : `${process.cwd()}/frontend/`
-
+const PORT = 3000;
+dotenv.config();
 
 async function createServer() {
-  const app: Express = express()
-  const riseact: RiseactApp = await riseactApp({
-    auth: {}})
-  const proxy = httpProxy.createProxyServer({ target: 'http://localhost:3002', ws: true });
-  const server = http.createServer(app)
+  const app: Express = express();
+  const server = http.createServer(app);
 
-  const PORT = parseInt(
-    process.env.BACKEND_PORT || process.env.PORT || "3001",
-    10
-  )
+  // Create the Riseact SDK instance with the client ID and client secret generated from Riseact
+  const riseact = await RiseactSDK({
+    auth: {
+      clientId: process.env.CLIENT_ID!,
+      clientSecret: process.env.CLIENT_SECRET!,
+    },
+  });
 
-  app.use(cookieParser())
-  app.use(session({
-    secret: 'super-secret',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
-  }))
-  
-  app.get("/oauth/authorize", riseact.auth.begin)
-  app.get("/oauth/callback", riseact.auth.callback)
+  // Create the OAuth endpoints for Riseact and check if the user is authenticated
+  app.use(riseact.auth.authMiddleware);
 
-  if (isProd) {
-    app.use(express.json())
-    app.use(serveStatic(STATIC_PATH, { index: false }))
-    app.use("/*", riseact.auth.authenticatedOrRedirect, async (_req, res, _next) => {
-      return res
-        .status(200)
-        .set("Content-Type", "text/html")
-        .send(readFileSync(join(STATIC_PATH, "index.html")))
-    })
+  // Create an endpoint for the GraphQL API that will proxy the request to Riseact
+  app.use("/graphql", riseact.network.gqlRewriterHandler);
+
+  if (process.env.NODE_ENV === "production") {
+    app.use(serveStatic(`${process.cwd()}/frontend/dist`, { index: false }));
   } else {
-    const vite = await createViteServer({
-      server: {
-        middlewareMode: true,
-        hmr: {
-          host: "0.0.0.0",
-          clientPort: 3001,
-          port: 3002
-        }
-      },
-      root: `${process.cwd()}/frontend`,
-      configFile: `${process.cwd()}/frontend/vite.config.ts`,
-    })
-
-    app.use(riseact.auth.authenticatedOrRedirect, vite.middlewares)
+    app.use(riseact.tools.devMiddleware);
+    server.on("upgrade", riseact.tools.hmrProxyHandler);
   }
 
-  server.on('upgrade', function (req, socket, head) {
-    console.log("proxying upgrade request", req.url);
-    proxy.ws(req, socket, head);
+  /* ----------------------------- Your code here ----------------------------- */
+
+  app.get("/api/hello", (req, res) => {
+    res.send("Hello World!");
   });
-  
+
+  /* -------------------------------------------------------------------------- */
 
   server.listen(PORT, () => {
-    console.log(`⚡️[app]: Server is running at http://localhost:${PORT}`)
-  })
+    console.log(`⚡️[app]: Server is running at http://localhost:${PORT}`);
+  });
 }
 
-createServer()
+createServer();
