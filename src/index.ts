@@ -24,14 +24,7 @@ async function createServer() {
 
   // Create an endpoint for the GraphQL API that will proxy the request to Riseact
   app.use("/graphql", riseact.network.gqlRewriterHandler);
-
-  if (process.env.NODE_ENV === "production") {
-    app.use(serveStatic(`${process.cwd()}/frontend/dist`, { index: false }));
-  } else {
-    app.use(riseact.tools.devMiddleware);
-    server.on("upgrade", riseact.tools.hmrProxyHandler);
-  }
-
+  
   /* ----------------------------- Your code here ----------------------------- */
 
   app.get("/api/hello", (req, res) => {
@@ -39,6 +32,13 @@ async function createServer() {
   });
 
   /* -------------------------------------------------------------------------- */
+
+  if (process.env.NODE_ENV === "production") {
+    app.use(serveStatic(`${process.cwd()}/frontend/dist`, { index: false }));
+  } else {
+    app.use(riseact.tools.devMiddleware);
+    server.on("upgrade", riseact.tools.hmrProxyHandler);
+  }
 
   server.listen(PORT, () => {
     console.log(`⚡️[app]: Server is running at http://localhost:${PORT}`);
