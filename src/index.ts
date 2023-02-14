@@ -2,7 +2,7 @@ import express, { Express } from "express";
 import http from "http";
 import dotenv from "dotenv";
 import serveStatic from "serve-static";
-import RiseactSDK from "../../riseact-node-sdk/src/";
+import RiseactSDK from "@riseact/riseact-node-sdk";
 
 const PORT = 3000;
 dotenv.config();
