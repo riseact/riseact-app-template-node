@@ -1,2 +1,2 @@
 name="demo"
-dev_commands=[ "yarn", "watch" ]
+dev_commands=[ "yarn", "dev-local" ]
