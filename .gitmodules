@@ -1,4 +1,4 @@
 [submodule "client"]
-    path = client
-	url = https://github.com/riseact/riseact-app-template-frontend.git
+	path = client
+	url = git@github.com:riseact/riseact-app-template-frontend.git
     branch = yarn-workspace
