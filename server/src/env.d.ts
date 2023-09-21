@@ -1,3 +1,5 @@
+import '@riseact/riseact-node-sdk/lib/TypeExtensions';
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {

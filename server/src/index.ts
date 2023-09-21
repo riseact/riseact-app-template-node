@@ -2,9 +2,10 @@ import express, { Express } from 'express';
 import http from 'http';
 import serveStatic from 'serve-static';
 import RiseactSDK from '@riseact/riseact-node-sdk';
-import {} from '@riseact/riseact-node-sdk/lib/TypeExtensions';
 import cors from 'cors';
 import RiseactConfig from '@config/riseact';
+// eslint-disable-next-line unused-imports/no-unused-imports
+// import {} from './envs';
 import { OrganizationCredentialsHandler, OrganizationInfoHandler } from '@controllers/organization';
 
 async function createServer() {
