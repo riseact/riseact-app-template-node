@@ -5,6 +5,7 @@
     "dev": "NODE_ENV=development ts-node-dev --respawn -r tsconfig-paths/register src/index.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.3.1",
     "@riseact/riseact-node-sdk": "^2.3.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

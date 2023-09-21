@@ -5,8 +5,7 @@ import RiseactSDK from '@riseact/riseact-node-sdk';
 import {} from '@riseact/riseact-node-sdk/lib/TypeExtensions';
 import cors from 'cors';
 import RiseactConfig from '@config/riseact';
-import { ORGANIZATION_INFO_QUERY } from '@common/queries';
-import { OrganizationInfoQueryResponse } from '@common/types';
+import { OrganizationCredentialsHandler, OrganizationInfoHandler } from '@controllers/organization';
 
 async function createServer() {
   const app: Express = express();
@@ -34,28 +33,8 @@ async function createServer() {
   app.get('/api/hello', (req, res) => {
     res.send('Hello World!');
   });
-
-  // Use Riseact graphQL from the server
-  app.get('/api/organization', async (req, res) => {
-    // Get the user from the request
-    const user = req.user;
-
-    // Create a GraphQL client for the user's organization
-    const graphqlClient = await riseact.network.createGqlClient(user.organizationId);
-
-    // Get the organization type from the common package
-    const { data, error } = await graphqlClient.query<OrganizationInfoQueryResponse>({
-      // Get the organization query from the common package
-      query: ORGANIZATION_INFO_QUERY,
-    });
-
-    if (error) {
-      return res.status(500).send('Something went wrong');
-    }
-
-    // Return the organization data
-    res.json(data);
-  });
+  app.get('/api/organization-info', OrganizationInfoHandler(riseact));
+  app.get('/api/organization-credentials', OrganizationCredentialsHandler());
 
   /* ------------------------------ Serve assets ------------------------------ */
 
