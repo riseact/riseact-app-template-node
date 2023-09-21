@@ -1,15 +1,15 @@
 import type { RiseactConfig } from '@riseact/riseact-node-sdk';
 import path from 'path';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './database';
 
 dotenv.config(process.env.NODE_ENV ? { path: path.join(process.cwd(), './../.env') } : {});
 
 const RiseactConfig: RiseactConfig = {
   // Provide your application ID and secret from Riseact
   auth: {
-    clientId: process.env.CLIENT_ID!,
-    clientSecret: process.env.CLIENT_SECRET!,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
   },
 
   // Provide a method to manage the credentials for the organizations to RiseactSDK.
@@ -21,34 +21,24 @@ const RiseactConfig: RiseactConfig = {
     type: 'custom',
     custom: {
       getCredentialsByClientToken: async (clientToken) => {
-        const prisma = new PrismaClient();
-
         const credentials = await prisma.organizationCredentials.findFirst({
           where: {
             clientToken,
           },
         });
 
-        prisma.$disconnect();
-
         return credentials;
       },
       getCredentialsByOrganizationId: async (organizationId) => {
-        const prisma = new PrismaClient();
-
         const credentials = await prisma.organizationCredentials.findUnique({
           where: {
             organizationId,
           },
         });
 
-        prisma.$disconnect();
-
         return credentials;
       },
       saveCredentials: async (credentials) => {
-        const prisma = new PrismaClient();
-
         await prisma.organizationCredentials.upsert({
           where: {
             organizationId: credentials.organizationId,
@@ -56,8 +46,6 @@ const RiseactConfig: RiseactConfig = {
           update: credentials,
           create: credentials,
         });
-
-        prisma.$disconnect();
       },
     },
   },

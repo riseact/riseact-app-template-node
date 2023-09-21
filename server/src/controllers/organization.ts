@@ -4,7 +4,7 @@ import {
   OrganizationInfoResponseQuery,
   OrganizationInfoResponseBody,
 } from '@common/types';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@config/database';
 import { RiseactInstance } from '@riseact/riseact-node-sdk';
 import { RequestHandler } from 'express';
 
@@ -42,18 +42,12 @@ export const OrganizationCredentialsHandler =
     // Get the user from the request
     const user = req.user;
 
-    // Create a Prisma client to use the database
-    const prisma = new PrismaClient();
-
     // Get the organization credentials from the database
     const credentials = await prisma.organizationCredentials.findUnique({
       where: {
         organizationId: user.organizationId,
       },
     });
-
-    // Disconnect the Prisma client from the database
-    prisma.$disconnect();
 
     if (!credentials) {
       return res.status(500);
