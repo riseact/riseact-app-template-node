@@ -8,8 +8,8 @@ dotenv.config(process.env.NODE_ENV ? { path: path.join(process.cwd(), './../.env
 const RiseactConfig: RiseactConfig = {
   // Provide your application ID and secret from Riseact
   auth: {
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
+    clientId: process.env.CLIENT_ID!,
+    clientSecret: process.env.CLIENT_SECRET!,
   },
 
   // Provide a method to manage the credentials for the organizations to RiseactSDK.

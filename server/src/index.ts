@@ -4,8 +4,7 @@ import serveStatic from 'serve-static';
 import RiseactSDK from '@riseact/riseact-node-sdk';
 import cors from 'cors';
 import RiseactConfig from '@config/riseact';
-// eslint-disable-next-line unused-imports/no-unused-imports
-// import {} from './envs';
+import {} from '@env';
 import { OrganizationCredentialsHandler, OrganizationInfoHandler } from '@controllers/organization';
 
 async function createServer() {
