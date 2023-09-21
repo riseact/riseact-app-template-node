@@ -1,18 +1,16 @@
 import { ORGANIZATION_INFO_QUERY } from '@common/queries';
-import { OrganizationInfoQueryResponse } from '@common/types';
+import {
+  OrganizationCredentialsResponseBody,
+  OrganizationInfoResponseQuery,
+  OrganizationInfoResponseBody,
+} from '@common/types';
 import { PrismaClient } from '@prisma/client';
 import { RiseactInstance } from '@riseact/riseact-node-sdk';
 import { RequestHandler } from 'express';
 
-interface OrganizationResponseBody {
-  id: number;
-  name: string;
-  logoUrl: string;
-}
-
 // Get the organization info from the GraphQL API.
 export const OrganizationInfoHandler =
-  (riseact: RiseactInstance): RequestHandler<null, OrganizationResponseBody, null> =>
+  (riseact: RiseactInstance): RequestHandler<null, OrganizationInfoResponseBody, null> =>
   async (req, res) => {
     // Get the user from the request
     const user = req.user;
@@ -21,7 +19,7 @@ export const OrganizationInfoHandler =
     const graphqlClient = await riseact.network.createGqlClient(user.organizationId);
 
     // Get the organization type from the common package
-    const { data, error } = await graphqlClient.query<OrganizationInfoQueryResponse>({
+    const { data, error } = await graphqlClient.query<OrganizationInfoResponseQuery>({
       // Get the organization query from the common package
       query: ORGANIZATION_INFO_QUERY,
     });
@@ -37,11 +35,6 @@ export const OrganizationInfoHandler =
       logoUrl: data.organization.logo.square,
     });
   };
-
-interface OrganizationCredentialsResponseBody {
-  organizationId: number;
-  clientToken: string;
-}
 
 // Get the organization client token from DB. This is useless, but it shows how to use your prisma client.
 export const OrganizationCredentialsHandler =

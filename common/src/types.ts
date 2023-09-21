@@ -1,4 +1,4 @@
-export type OrganizationInfoQueryResponse = {
+export type OrganizationInfoResponseQuery = {
   organization: {
     name: string;
     logo: {
@@ -9,3 +9,14 @@ export type OrganizationInfoQueryResponse = {
     name: string;
   };
 };
+
+export interface OrganizationInfoResponseBody {
+  id: number;
+  name: string;
+  logoUrl: string;
+}
+
+export interface OrganizationCredentialsResponseBody {
+  organizationId: number;
+  clientToken: string;
+}
