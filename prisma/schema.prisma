@@ -15,4 +15,6 @@ model OrganizationCredentials {
   accessToken String
   refreshToken String
   clientToken String
+  expiresDateUTC DateTime
+  expiresInSeconds Int
 }
