@@ -11,7 +11,7 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "yarn workspace server dev",
+    "dev": "concurrently -c blue,red -n SRV,GQL --kill-others \"yarn workspace server dev\" \"yarn workspace common codegen\"",
     "lint": "eslint --ext .ts,.tsx .",
     "lint:fix": "eslint --fix --ext .ts,.tsx .",
     "prisma:migrate": "npx prisma migrate dev",
@@ -19,9 +19,10 @@
     "prisma:generate": "npx prisma generate"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "6.7.2",
-    "@typescript-eslint/parser": "6.7.2",
-    "eslint": "8.49.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "concurrently": "8.2.2",
+    "eslint": "8.50.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-jsx-a11y": "6.7.1",
     "eslint-plugin-prettier": "5.0.0",
@@ -32,7 +33,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.7",
-    "graphql": "^16.6.0"
+    "@apollo/client": "^3.8.4",
+    "graphql": "^16.8.1"
   }
 }
