@@ -11,29 +11,30 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently -c blue,red -n SRV,GQL --kill-others \"yarn workspace server dev\" \"yarn workspace common codegen\"",
+    "dev": "npm run prisma:migrate && npm run clean-vite-cache && concurrently -c blue,red -n SRV,GQL --kill-others \"yarn workspace server dev\" \"yarn workspace common codegen\"",
     "lint": "eslint --ext .ts,.tsx .",
     "lint:fix": "eslint --fix --ext .ts,.tsx .",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
-    "prisma:generate": "npx prisma generate"
+    "prisma:generate": "npx prisma generate",
+    "clean-vite-cache": "rm -rf client/node_modules/.vite"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "concurrently": "8.2.2",
-    "eslint": "8.50.0",
+    "eslint": "8.52.0",
     "eslint-config-prettier": "9.0.0",
-    "eslint-plugin-jsx-a11y": "6.7.1",
-    "eslint-plugin-prettier": "5.0.0",
+    "eslint-plugin-jsx-a11y": "6.8.0",
+    "eslint-plugin-prettier": "5.0.1",
     "eslint-plugin-react": "7.33.2",
     "eslint-plugin-unused-imports": "3.0.0",
     "prettier": "3.0.3",
-    "prisma": "^5.3.1",
+    "prisma": "^5.5.2",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.4",
+    "@apollo/client": "^3.8.6",
     "graphql": "^16.8.1"
   }
 }
