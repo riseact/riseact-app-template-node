@@ -38,6 +38,7 @@ export const CAMPAIGN_UPDATE_MUTATION = graphql(`
     campaignUpdate(id: $id, data: $data) {
       campaign {
         id
+        title
       }
       userErrors {
         code
