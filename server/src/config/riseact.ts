@@ -10,6 +10,8 @@ const RiseactConfig: RiseactConfig = {
   auth: {
     clientId: process.env.CLIENT_ID!,
     clientSecret: process.env.CLIENT_SECRET!,
+
+    redirectUri: process.env.REDIRECT_URI!,
   },
 
   // Provide a method to manage the credentials for the organizations to RiseactSDK.
@@ -52,10 +54,10 @@ const RiseactConfig: RiseactConfig = {
 
   ...(process.env.NODE_ENV === 'development' && {
     // todo Riseact developers only
-    hosts: {
-      accounts: 'http://accounts.localhost:8000',
-      core: 'http://core.localhost:8000',
-    },
+    // hosts: {
+    //   accounts: 'http://accounts.localhost:8000',
+    //   core: 'http://core.localhost:8000',
+    // },
     // todo: remove
 
     dev: {
