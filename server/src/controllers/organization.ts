@@ -32,7 +32,7 @@ export const OrganizationInfoHandler =
     res.json({
       id: user.organizationId,
       name: data.organization.name,
-      logoUrl: data.organization.logo.square,
+      logoUrl: data.organization.logo?.square,
     });
   };
 
