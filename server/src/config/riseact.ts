@@ -53,18 +53,7 @@ const RiseactConfig: RiseactConfig = {
   },
 
   ...(process.env.NODE_ENV === 'development' && {
-    // todo Riseact developers only
-    // hosts: {
-    //   accounts: 'http://accounts.localhost:8000',
-    //   core: 'http://core.localhost:8000',
-    // },
-    // todo: remove
-
     dev: {
-      // todo Riseact developers only
-      hmrClientPort: 3000,
-      // todo: remove
-
       // Provide the path to your Vite configuration file and the root directory of your client application.
       viteConfig: {
         root: path.join(process.cwd(), '../client'),
