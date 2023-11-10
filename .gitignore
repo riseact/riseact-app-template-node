@@ -8,3 +8,4 @@ yarn.lock
 package-lock.json
 data
 .env
+common/src/gql
