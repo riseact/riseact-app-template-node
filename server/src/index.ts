@@ -38,7 +38,7 @@ async function createServer() {
 
   /* ------------------------------ Serve assets ------------------------------ */
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV !== 'development') {
     console.info('🚀 Production mode, using frontend build');
     app.use(serveStatic(`${process.cwd()}/static`));
   } else {

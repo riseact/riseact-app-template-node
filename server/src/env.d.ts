@@ -6,6 +6,7 @@ declare global {
       NODE_ENV: 'development' | 'production';
       CLIENT_ID: string;
       CLIENT_SECRET: string;
+      RISEACT_APP_URL: string;
     }
   }
 }
