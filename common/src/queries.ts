@@ -8,9 +8,6 @@ export const ORGANIZATION_INFO_QUERY = graphql(`
         square
       }
     }
-    user {
-      name
-    }
   }
 `);
 
