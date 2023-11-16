@@ -1,5 +1,5 @@
 {
-  "name": "riseact-node-app",
+  "name": "riseact-app-template-node",
   "private": true,
   "workspaces": [
     "client",
@@ -17,7 +17,9 @@
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
     "prisma:generate": "npx prisma generate",
-    "clean-vite-cache": "rimraf client/node_modules/.vite"
+    "clean-vite-cache": "rimraf client/node_modules/.vite",
+    "build": "rm -rf ./build && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && yarn workspace client build",
+    "start": "node build/server/src/index.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.9.1",
@@ -32,6 +34,7 @@
     "prettier": "3.0.3",
     "prisma": "^5.5.2",
     "rimraf": "^5.0.5",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.2.2",
     "yarn": "^1.22.19"
   },
