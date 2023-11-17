@@ -595,21 +595,32 @@ export enum ErrorCode {
 }
 
 export enum EventTopic {
+  All = 'ALL',
   CampaignCreated = 'CAMPAIGN_CREATED',
   CampaignDeleted = 'CAMPAIGN_DELETED',
   CampaignUpdated = 'CAMPAIGN_UPDATED',
   CheckoutClosed = 'CHECKOUT_CLOSED',
   CheckoutCreated = 'CHECKOUT_CREATED',
   CheckoutUpdated = 'CHECKOUT_UPDATED',
+  CommentCreated = 'COMMENT_CREATED',
+  CommentDeleted = 'COMMENT_DELETED',
+  CommentUpdated = 'COMMENT_UPDATED',
   DonationCreated = 'DONATION_CREATED',
   DonationUpdated = 'DONATION_UPDATED',
+  NotificationEmailSent = 'NOTIFICATION_EMAIL_SENT',
+  NotificationSmsSent = 'NOTIFICATION_SMS_SENT',
+  PartnerThemePriceChanged = 'PARTNER_THEME_PRICE_CHANGED',
   PaymentCreated = 'PAYMENT_CREATED',
   PaymentUpdated = 'PAYMENT_UPDATED',
+  StaffCreated = 'STAFF_CREATED',
+  StaffDisabled = 'STAFF_DISABLED',
+  StaffEnabled = 'STAFF_ENABLED',
   SupporterCreated = 'SUPPORTER_CREATED',
   SupporterDeleted = 'SUPPORTER_DELETED',
   SupporterDonationCreated = 'SUPPORTER_DONATION_CREATED',
   SupporterUpdated = 'SUPPORTER_UPDATED',
-  TotemRegistered = 'TOTEM_REGISTERED'
+  TotemRegistered = 'TOTEM_REGISTERED',
+  TotemUnregistered = 'TOTEM_UNREGISTERED'
 }
 
 export type Events = TimelineBasicEvent | TimelineCommentEvent;
@@ -726,12 +737,14 @@ export type IntRange = {
 
 export type Invite = {
   __typename?: 'Invite';
-  email: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   id: Scalars['Int'];
   invitationAcceptDate?: Maybe<Scalars['String']>;
   invitationSentDate?: Maybe<Scalars['String']>;
   invitationStatus: StaffInvitationStatus;
   organization: Organization;
+  partnerEmail?: Maybe<Scalars['String']>;
+  partnerName?: Maybe<Scalars['String']>;
   role: StaffRole;
   token: Scalars['String'];
 };
@@ -880,9 +893,13 @@ export type Mutation = {
   pagesDelete: PagesResponse;
   pagesUpdate: PagesResponse;
   paperDocumentUpdate: PaperDocument;
+  partnerInviteUpdate: Invite;
   paymentExport: Scalars['String'];
   paymentRefund: PaymentResponse;
   paymentUpdate: PaymentResponse;
+  paypalActivate: PayPalAccount;
+  paypalGenerateOnboardingLink: PayPalLink;
+  paypalRefreshOrganizationAccount?: Maybe<Scalars['Void']>;
   projectCreate: ProjectResponse;
   projectDelete: ProjectResponse;
   projectRemoveItem: ProjectResponse;
@@ -891,6 +908,7 @@ export type Mutation = {
   segmentCreate: SegmentResponse;
   segmentDelete: SegmentResponse;
   segmentUpdate: SegmentResponse;
+  staffSendPasswordReset: StaffResponse;
   staffUpdate: StaffResponse;
   storeThemeInstall: Theme;
   stripeActivate: StripeAccount;
@@ -1213,6 +1231,12 @@ export type MutationPaperDocumentUpdateArgs = {
 };
 
 
+export type MutationPartnerInviteUpdateArgs = {
+  id: Scalars['Int'];
+  state: StaffInvitationStatus;
+};
+
+
 export type MutationPaymentExportArgs = {
   domain: PaymentDomain;
   format: ExportFormat;
@@ -1270,6 +1294,11 @@ export type MutationSegmentDeleteArgs = {
 
 export type MutationSegmentUpdateArgs = {
   data: SegmentInput;
+  id: Scalars['Int'];
+};
+
+
+export type MutationStaffSendPasswordResetArgs = {
   id: Scalars['Int'];
 };
 
@@ -1665,6 +1694,21 @@ export type PaperDocumentInput = {
   style?: InputMaybe<Scalars['String']>;
 };
 
+export type PayPalAccount = {
+  __typename?: 'PayPalAccount';
+  isEnabled?: Maybe<Scalars['Boolean']>;
+  merchantId?: Maybe<Scalars['String']>;
+  paymentsReceivable?: Maybe<Scalars['Boolean']>;
+  primaryEmail?: Maybe<Scalars['String']>;
+  primaryEmailConfirmed?: Maybe<Scalars['Boolean']>;
+  trackingId?: Maybe<Scalars['String']>;
+};
+
+export type PayPalLink = {
+  __typename?: 'PayPalLink';
+  url: Scalars['String'];
+};
+
 export type Payment = {
   __typename?: 'Payment';
   amount: Scalars['Float'];
@@ -1725,6 +1769,7 @@ export type PaymentMethodResponse = {
 
 export enum PaymentProcessor {
   Manual = 'MANUAL',
+  Paypal = 'PAYPAL',
   Stripe = 'STRIPE'
 }
 
@@ -1926,6 +1971,7 @@ export type Query = {
   paperDocument: PaperDocument;
   payment: Payment;
   payments: PaymentConnection;
+  paypal?: Maybe<PayPalAccount>;
   plan?: Maybe<Plan>;
   project: Project;
   projects: ProjectConnection;
@@ -2086,6 +2132,11 @@ export type QueryFormArgs = {
 export type QueryFormsArgs = {
   filters?: InputMaybe<FormFilters>;
   pagination?: InputMaybe<PaginationInput>;
+};
+
+
+export type QueryInvitesArgs = {
+  filters: StaffInviteFilters;
 };
 
 
@@ -2400,6 +2451,16 @@ export enum StaffInvitationStatus {
   Rejected = 'REJECTED'
 }
 
+export enum StaffInvitationType {
+  Internal = 'INTERNAL',
+  Partner = 'PARTNER'
+}
+
+export type StaffInviteFilters = {
+  state?: InputMaybe<StaffInvitationStatus>;
+  type?: InputMaybe<StaffInvitationType>;
+};
+
 export type StaffResponse = {
   __typename?: 'StaffResponse';
   staff?: Maybe<Staff>;
@@ -2618,6 +2679,7 @@ export type SupporterFiltersInput = {
   country?: InputMaybe<Scalars['String']>;
   createDate?: InputMaybe<DateRange>;
   dateOfBirth?: InputMaybe<Scalars['Date']>;
+  email?: InputMaybe<Scalars['String']>;
   emailMarketing?: InputMaybe<Scalars['Boolean']>;
   firstDonationDate?: InputMaybe<DateRange>;
   haveEmail?: InputMaybe<Scalars['Boolean']>;
@@ -2912,7 +2974,7 @@ export type CampaignsListQuery = { __typename?: 'Query', campaigns: { __typename
 export type GetOrganizationInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOrganizationInfoQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', name: string, logo?: { __typename?: 'Media', square: string } | null }, user: { __typename?: 'Staff', name?: string | null } };
+export type GetOrganizationInfoQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', name: string, logo?: { __typename?: 'Media', square: string } | null } };
 
 export type CampaignQueryVariables = Exact<{
   campaignId: Scalars['Int'];
@@ -2932,6 +2994,6 @@ export type CampaignUpdateDetailMutation = { __typename?: 'Mutation', campaignUp
 
 export const CampaignCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CampaignCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CampaignInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaignCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaign"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"note"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CampaignCreateMutation, CampaignCreateMutationVariables>;
 export const CampaignsListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CampaignsList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filters"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CampaignFilters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaigns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}},{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"cover"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"square"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<CampaignsListQuery, CampaignsListQueryVariables>;
-export const GetOrganizationInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"square"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<GetOrganizationInfoQuery, GetOrganizationInfoQueryVariables>;
+export const GetOrganizationInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"square"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganizationInfoQuery, GetOrganizationInfoQueryVariables>;
 export const CampaignDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Campaign"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"campaignId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaign"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"campaignId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"cover"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"small"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createDate"}}]}}]}}]} as unknown as DocumentNode<CampaignQuery, CampaignQueryVariables>;
 export const CampaignUpdateDetailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CampaignUpdateDetail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CampaignInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaignUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaign"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CampaignUpdateDetailMutation, CampaignUpdateDetailMutationVariables>;
