@@ -40,7 +40,7 @@ async function createServer() {
 
   if (process.env.NODE_ENV !== 'development') {
     console.info('🚀 Production mode, using frontend build');
-    app.use(serveStatic(`${process.cwd()}/static`));
+    app.use(serveStatic(`${process.cwd()}/client`));
   } else {
     console.info('🔧 Development mode, using frontend dev server');
     app.use(riseact.devTools.devMiddleware);
