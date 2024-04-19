@@ -6,6 +6,7 @@ import cors from 'cors';
 import RiseactConfig from '@config/riseact';
 import {} from '@env';
 import { OrganizationCredentialsHandler, OrganizationInfoHandler } from '@controllers/organization';
+import { WebhookEventTopic } from '@common/gql/graphql';
 
 async function createServer() {
   const app: Express = express();
@@ -18,6 +19,13 @@ async function createServer() {
 
   // Uncomment the following line to enable the GraphQL Playground
   app.use(cors({ origin: true, credentials: true }));
+
+  // Register a webhook to listen to the CampaignCreated events
+  app.use(
+    riseact.network.registerWebhook(WebhookEventTopic.CampaignCreated, (data) => {
+      console.log('Webhook received', data);
+    }),
+  );
 
   // Create the OAuth endpoints for Riseact and check if the user is authenticated
   app.use(riseact.auth.authMiddleware);

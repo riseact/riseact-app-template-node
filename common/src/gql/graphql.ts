@@ -23,6 +23,84 @@ export type Scalars = {
   Void: any;
 };
 
+export type Activity = {
+  __typename?: 'Activity';
+  category: ActivityCategory;
+  createDate: Scalars['DateTime'];
+  deadlineDate?: Maybe<Scalars['Date']>;
+  doneDate?: Maybe<Scalars['Date']>;
+  id: Scalars['Int'];
+  note?: Maybe<Scalars['String']>;
+  staff: ActivityStaff;
+  updateDate: Scalars['DateTime'];
+};
+
+export enum ActivityCategory {
+  Email = 'EMAIL',
+  Letter = 'LETTER',
+  Meeting = 'MEETING',
+  PhoneCall = 'PHONE_CALL',
+  Reminder = 'REMINDER',
+  Todo = 'TODO'
+}
+
+export type ActivityConnection = {
+  __typename?: 'ActivityConnection';
+  edges: Array<ActivityEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ActivityCreateInput = {
+  category: ActivityCategory;
+  deadlineDate?: InputMaybe<Scalars['Date']>;
+  doneDate?: InputMaybe<Scalars['Date']>;
+  note?: InputMaybe<Scalars['String']>;
+  staffId: Scalars['Int'];
+  subject: ActivitySubject;
+  subjectId: Scalars['Int'];
+};
+
+export type ActivityEdge = {
+  __typename?: 'ActivityEdge';
+  cursor: Scalars['String'];
+  node: Activity;
+};
+
+export type ActivityFilters = {
+  donationId?: InputMaybe<Scalars['Int']>;
+  dueDate?: InputMaybe<DateRange>;
+  order?: InputMaybe<Scalars['String']>;
+  q?: InputMaybe<Scalars['String']>;
+  supporterId?: InputMaybe<Scalars['Int']>;
+  userId?: InputMaybe<Scalars['Int']>;
+};
+
+export type ActivityResponse = {
+  __typename?: 'ActivityResponse';
+  activity?: Maybe<Activity>;
+  userErrors?: Maybe<Array<UserError>>;
+};
+
+export type ActivityStaff = {
+  __typename?: 'ActivityStaff';
+  email: Scalars['String'];
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export enum ActivitySubject {
+  Donation = 'DONATION',
+  Supporter = 'SUPPORTER'
+}
+
+export type ActivityUpdateInput = {
+  category?: InputMaybe<ActivityCategory>;
+  deadlineDate?: InputMaybe<Scalars['Date']>;
+  doneDate?: InputMaybe<Scalars['Date']>;
+  note?: InputMaybe<Scalars['String']>;
+  staffId?: InputMaybe<Scalars['Int']>;
+};
+
 export type Application = {
   __typename?: 'Application';
   appUrl?: Maybe<Scalars['String']>;
@@ -148,7 +226,7 @@ export enum AssetType {
 export type AssetsFiltersInput = {
   assetType?: InputMaybe<AssetType>;
   key?: InputMaybe<Scalars['String']>;
-  themeUuid: Scalars['String'];
+  themeUuid?: InputMaybe<Scalars['String']>;
 };
 
 export enum BillingCycle {
@@ -235,23 +313,39 @@ export type BlogsResponse = {
 
 export type Campaign = {
   __typename?: 'Campaign';
+  allowCustomAmount: Scalars['Boolean'];
+  allowCustomSubscriptionAmount: Scalars['Boolean'];
   allowPeerToPeer?: Maybe<Scalars['Boolean']>;
-  channels: Array<Scalars['Int']>;
+  asks: Array<Scalars['Float']>;
+  asksSubscription: Array<Scalars['Float']>;
   content?: Maybe<Scalars['String']>;
   costExamples: Array<CostExample>;
   cover?: Maybe<Media>;
   createDate: Scalars['DateTime'];
-  form?: Maybe<Form>;
+  defaultAmount?: Maybe<Scalars['Float']>;
+  defaultSubscriptionAmount?: Maybe<Scalars['Float']>;
+  excludedChannels: Array<Scalars['Int']>;
   goal?: Maybe<Scalars['Float']>;
+  hasOneOff: Scalars['Boolean'];
+  hasSubscription: Scalars['Boolean'];
+  hasSubscriptionCustomOptions: Scalars['Boolean'];
   id: Scalars['Int'];
   isGoalEnabled: Scalars['Boolean'];
+  maxAmount?: Maybe<Scalars['Float']>;
+  maxSubscriptionAmount?: Maybe<Scalars['Float']>;
+  minAmount?: Maybe<Scalars['Float']>;
+  minSubscriptionAmount?: Maybe<Scalars['Float']>;
   note?: Maybe<Scalars['String']>;
+  privacyNote?: Maybe<Scalars['String']>;
+  requiredFields: Array<Scalars['String']>;
   seoDescription?: Maybe<Scalars['String']>;
   seoTitle?: Maybe<Scalars['String']>;
+  shownFields: Array<Scalars['String']>;
   sitefrontUrl: Scalars['String'];
   slug: Scalars['String'];
   tags: Array<Scalars['String']>;
   template?: Maybe<Scalars['String']>;
+  thankyouTemplate?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   type: CampaignType;
   updateDate: Scalars['DateTime'];
@@ -273,27 +367,45 @@ export type CampaignEdge = {
 
 export type CampaignFilters = {
   channels?: InputMaybe<Array<Scalars['String']>>;
+  ids?: InputMaybe<Array<Scalars['Int']>>;
   order?: InputMaybe<Scalars['String']>;
   q?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   tagsNot?: InputMaybe<Array<Scalars['String']>>;
+  visibility?: InputMaybe<WebDocumentVisibility>;
 };
 
 export type CampaignInput = {
+  allowCustomAmount?: InputMaybe<Scalars['Boolean']>;
+  allowCustomSubscriptionAmount?: InputMaybe<Scalars['Boolean']>;
   allowPeerToPeer?: InputMaybe<Scalars['Boolean']>;
-  channels: Array<Scalars['Int']>;
+  asks?: InputMaybe<Array<Scalars['Float']>>;
+  asksSubscription?: InputMaybe<Array<Scalars['Float']>>;
   code?: InputMaybe<Scalars['String']>;
   content?: InputMaybe<Scalars['String']>;
   costExamples: Array<CostExampleInput>;
   coverId?: InputMaybe<Scalars['Int']>;
-  formId?: InputMaybe<Scalars['Int']>;
+  defaultAmount?: InputMaybe<Scalars['Float']>;
+  defaultSubscriptionAmount?: InputMaybe<Scalars['Float']>;
+  excludedChannels?: InputMaybe<Array<Scalars['Int']>>;
   goal?: InputMaybe<Scalars['Float']>;
+  hasOneOff?: InputMaybe<Scalars['Boolean']>;
+  hasSubscription?: InputMaybe<Scalars['Boolean']>;
+  hasSubscriptionCustomOptions?: InputMaybe<Scalars['Boolean']>;
   isGoalEnabled?: InputMaybe<Scalars['Boolean']>;
+  maxAmount?: InputMaybe<Scalars['Float']>;
+  maxSubscriptionAmount?: InputMaybe<Scalars['Float']>;
+  minAmount?: InputMaybe<Scalars['Float']>;
+  minSubscriptionAmount?: InputMaybe<Scalars['Float']>;
+  privacyNote?: InputMaybe<Scalars['String']>;
+  requiredFields?: InputMaybe<Array<Scalars['String']>>;
   seoDescription?: InputMaybe<Scalars['String']>;
   seoTitle?: InputMaybe<Scalars['String']>;
+  shownFields?: InputMaybe<Array<Scalars['String']>>;
   slug?: InputMaybe<Scalars['String']>;
   tags: Array<Scalars['String']>;
   template?: InputMaybe<Scalars['String']>;
+  thankyouTemplate?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
   type?: InputMaybe<CampaignType>;
   visibility?: InputMaybe<WebDocumentVisibility>;
@@ -319,6 +431,7 @@ export type Checkout = {
   donation?: Maybe<Donation>;
   donationAmount?: Maybe<Scalars['Float']>;
   donationFrequency?: Maybe<Frequency>;
+  enabledPaymentMethods: Array<PaymentMethod>;
   id: Scalars['Int'];
   state: CheckoutState;
   supporter?: Maybe<Supporter>;
@@ -349,6 +462,10 @@ export type Checkout = {
   updateDate: Scalars['DateTime'];
 };
 
+export type CheckoutCompleteInput = {
+  paymentMethodId?: InputMaybe<Scalars['Int']>;
+};
+
 export type CheckoutConnection = {
   __typename?: 'CheckoutConnection';
   edges: Array<CheckoutEdge>;
@@ -372,11 +489,12 @@ export type CheckoutInput = {
   device?: InputMaybe<Scalars['String']>;
   donationData?: InputMaybe<DonationInput>;
   frequency?: InputMaybe<Frequency>;
+  isPromise?: InputMaybe<Scalars['Boolean']>;
   paymentMethodId?: InputMaybe<Scalars['Int']>;
   peerCampaignId?: InputMaybe<Scalars['Int']>;
   supporterData?: InputMaybe<SupporterInput>;
   supporterId?: InputMaybe<Scalars['Int']>;
-  tags: Array<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type CheckoutPaymentInput = {
@@ -386,8 +504,10 @@ export type CheckoutPaymentInput = {
   paymentDate?: InputMaybe<Scalars['DateTime']>;
   paymentMethodId?: InputMaybe<Scalars['Int']>;
   peerCampaignId?: InputMaybe<Scalars['Int']>;
+  satispayPaymentIntentId?: InputMaybe<Scalars['String']>;
   sepaBankAccountId?: InputMaybe<Scalars['Int']>;
   state?: InputMaybe<PaymentState>;
+  stripePaymentIntentId?: InputMaybe<Scalars['String']>;
 };
 
 export type CheckoutResponse = {
@@ -441,13 +561,23 @@ export type CommentUpdateInput = {
 export type CostExample = {
   __typename?: 'CostExample';
   amount: Scalars['Float'];
+  availableQuantity: Scalars['Int'];
   description: Scalars['String'];
+  image?: Maybe<Media>;
+  monitorQuantity: Scalars['Boolean'];
+  name: Scalars['String'];
+  quantity: Scalars['Int'];
   uuid: Scalars['String'];
 };
 
 export type CostExampleInput = {
   amount: Scalars['Float'];
+  availableQuantity: Scalars['Int'];
   description: Scalars['String'];
+  imageId?: InputMaybe<Scalars['Int']>;
+  monitorQuantity: Scalars['Boolean'];
+  name: Scalars['String'];
+  quantity: Scalars['Int'];
   uuid: Scalars['String'];
 };
 
@@ -516,6 +646,7 @@ export type Donation = {
   checkout?: Maybe<Checkout>;
   code: Scalars['String'];
   completedDate?: Maybe<Scalars['DateTime']>;
+  costExample?: Maybe<CostExample>;
   createDate: Scalars['DateTime'];
   frequency?: Maybe<Frequency>;
   id: Scalars['Int'];
@@ -547,10 +678,13 @@ export type DonationEdge = {
 };
 
 export type DonationFiltersInput = {
+  campaigns?: InputMaybe<Array<Scalars['Int']>>;
   createDate?: InputMaybe<DateRange>;
   frequencies?: InputMaybe<Array<Frequency>>;
   order?: InputMaybe<Scalars['String']>;
+  paymentMethods?: InputMaybe<Array<Scalars['Int']>>;
   q?: InputMaybe<Scalars['String']>;
+  supporterType?: InputMaybe<SupporterType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   tagsNot?: InputMaybe<Array<Scalars['String']>>;
   totalPaid?: InputMaybe<IntRange>;
@@ -594,36 +728,7 @@ export enum ErrorCode {
   Protected = 'PROTECTED'
 }
 
-export enum EventTopic {
-  All = 'ALL',
-  CampaignCreated = 'CAMPAIGN_CREATED',
-  CampaignDeleted = 'CAMPAIGN_DELETED',
-  CampaignUpdated = 'CAMPAIGN_UPDATED',
-  CheckoutClosed = 'CHECKOUT_CLOSED',
-  CheckoutCreated = 'CHECKOUT_CREATED',
-  CheckoutUpdated = 'CHECKOUT_UPDATED',
-  CommentCreated = 'COMMENT_CREATED',
-  CommentDeleted = 'COMMENT_DELETED',
-  CommentUpdated = 'COMMENT_UPDATED',
-  DonationCreated = 'DONATION_CREATED',
-  DonationUpdated = 'DONATION_UPDATED',
-  NotificationEmailSent = 'NOTIFICATION_EMAIL_SENT',
-  NotificationSmsSent = 'NOTIFICATION_SMS_SENT',
-  PartnerThemePriceChanged = 'PARTNER_THEME_PRICE_CHANGED',
-  PaymentCreated = 'PAYMENT_CREATED',
-  PaymentUpdated = 'PAYMENT_UPDATED',
-  StaffCreated = 'STAFF_CREATED',
-  StaffDisabled = 'STAFF_DISABLED',
-  StaffEnabled = 'STAFF_ENABLED',
-  SupporterCreated = 'SUPPORTER_CREATED',
-  SupporterDeleted = 'SUPPORTER_DELETED',
-  SupporterDonationCreated = 'SUPPORTER_DONATION_CREATED',
-  SupporterUpdated = 'SUPPORTER_UPDATED',
-  TotemRegistered = 'TOTEM_REGISTERED',
-  TotemUnregistered = 'TOTEM_UNREGISTERED'
-}
-
-export type Events = TimelineBasicEvent | TimelineCommentEvent;
+export type Events = TimelineActivityEvent | TimelineBasicEvent | TimelineCommentEvent;
 
 export type EventsConnection = {
   __typename?: 'EventsConnection';
@@ -796,6 +901,12 @@ export type MediaEdge = {
   node: Media;
 };
 
+export type MediaResponse = {
+  __typename?: 'MediaResponse';
+  media?: Maybe<Media>;
+  userErrors?: Maybe<Array<UserError>>;
+};
+
 export type Menu = {
   __typename?: 'Menu';
   handle: Scalars['String'];
@@ -841,12 +952,18 @@ export type MenuResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activityCreate: ActivityResponse;
+  activityDelete: ActivityResponse;
+  activityDone: ActivityResponse;
+  activityUndone: ActivityResponse;
+  activityUpdate: ActivityResponse;
   applicationUninstall: Application;
   articlesCreate: ArticlesResponse;
   articlesDelete: ArticlesResponse;
   articlesUpdate: ArticlesResponse;
   assetCreate: Asset;
   assetDelete: Asset;
+  assetDuplicate: Asset;
   assetUpdate: Asset;
   billingCreateCheckoutSession: CheckoutSession;
   billingSelectPlan: PendingSubscription;
@@ -856,6 +973,7 @@ export type Mutation = {
   campaignCreate: CampaignResponse;
   campaignDelete: CampaignResponse;
   campaignUpdate: CampaignResponse;
+  checkoutComplete: CheckoutResponse;
   checkoutCreate: CheckoutResponse;
   checkoutRegisterPayment: CheckoutResponse;
   checkoutUpdate: CheckoutResponse;
@@ -865,6 +983,7 @@ export type Mutation = {
   domainsCheckStatus: DomainsResponse;
   domainsConnectExisting: DomainsResponse;
   domainsSetPrimary: DomainsResponse;
+  donationBulkDelete: Scalars['Boolean'];
   donationDelete: Donation;
   donationExport: Scalars['String'];
   donationImport: Task;
@@ -882,6 +1001,7 @@ export type Mutation = {
   manualPaymentMethodDelete: PaymentMethodResponse;
   manualPaymentMethodUpdate: PaymentMethodResponse;
   mediaCreate: Media;
+  mediaDelete: MediaResponse;
   menuCreate: MenuResponse;
   menuDelete: MenuResponse;
   menuUpdate: MenuResponse;
@@ -897,14 +1017,19 @@ export type Mutation = {
   paymentExport: Scalars['String'];
   paymentRefund: PaymentResponse;
   paymentUpdate: PaymentResponse;
+  paypalAccountReset?: Maybe<Scalars['Void']>;
   paypalActivate: PayPalAccount;
   paypalGenerateOnboardingLink: PayPalLink;
   paypalRefreshOrganizationAccount?: Maybe<Scalars['Void']>;
+  peerCampaignCreate: PeerCampaignResponse;
+  peerCampaignDelete: PeerCampaignResponse;
+  peerCampaignUpdate: PeerCampaignResponse;
   projectCreate: ProjectResponse;
   projectDelete: ProjectResponse;
   projectRemoveItem: ProjectResponse;
   projectUpdate: ProjectResponse;
   projectUpdateItems: ProjectResponse;
+  satispayActivate: SatispayAccount;
   segmentCreate: SegmentResponse;
   segmentDelete: SegmentResponse;
   segmentUpdate: SegmentResponse;
@@ -923,6 +1048,7 @@ export type Mutation = {
   supporterImport: Task;
   supporterSendTaxCertificate: Supporter;
   supporterUpdate: Supporter;
+  templateClone: Asset;
   terminalConnectionTokenCreate: Scalars['String'];
   terminalDelete: Scalars['String'];
   terminalLocationCreate: StripeTerminalLocation;
@@ -945,6 +1071,32 @@ export type Mutation = {
   webhooksDelete: Webhook;
   webhooksUpdate: Webhook;
   websiteUpdate: Website;
+};
+
+
+export type MutationActivityCreateArgs = {
+  data: ActivityCreateInput;
+};
+
+
+export type MutationActivityDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationActivityDoneArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationActivityUndoneArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationActivityUpdateArgs = {
+  data: ActivityUpdateInput;
+  id: Scalars['Int'];
 };
 
 
@@ -976,6 +1128,12 @@ export type MutationAssetCreateArgs = {
 
 export type MutationAssetDeleteArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationAssetDuplicateArgs = {
+  name: Scalars['String'];
+  sourceId: Scalars['Int'];
 };
 
 
@@ -1029,6 +1187,12 @@ export type MutationCampaignUpdateArgs = {
 };
 
 
+export type MutationCheckoutCompleteArgs = {
+  data: CheckoutCompleteInput;
+  token: Scalars['String'];
+};
+
+
 export type MutationCheckoutCreateArgs = {
   data: CheckoutInput;
 };
@@ -1036,13 +1200,13 @@ export type MutationCheckoutCreateArgs = {
 
 export type MutationCheckoutRegisterPaymentArgs = {
   data: CheckoutPaymentInput;
-  id: Scalars['Int'];
+  token: Scalars['String'];
 };
 
 
 export type MutationCheckoutUpdateArgs = {
   data: CheckoutInput;
-  id: Scalars['Int'];
+  token: Scalars['String'];
 };
 
 
@@ -1074,6 +1238,11 @@ export type MutationDomainsConnectExistingArgs = {
 
 export type MutationDomainsSetPrimaryArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationDonationBulkDeleteArgs = {
+  filters: DonationFiltersInput;
 };
 
 
@@ -1171,6 +1340,11 @@ export type MutationMediaCreateArgs = {
 };
 
 
+export type MutationMediaDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationMenuCreateArgs = {
   data: MenuInput;
 };
@@ -1228,6 +1402,7 @@ export type MutationPagesUpdateArgs = {
 export type MutationPaperDocumentUpdateArgs = {
   code: PaperDocumentCode;
   data: PaperDocumentInput;
+  key?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1250,6 +1425,22 @@ export type MutationPaymentRefundArgs = {
 
 export type MutationPaymentUpdateArgs = {
   data: ManualPaymentInput;
+  id: Scalars['Int'];
+};
+
+
+export type MutationPeerCampaignCreateArgs = {
+  data: PeerCampaignInput;
+};
+
+
+export type MutationPeerCampaignDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationPeerCampaignUpdateArgs = {
+  data: PeerCampaignInput;
   id: Scalars['Int'];
 };
 
@@ -1279,6 +1470,11 @@ export type MutationProjectUpdateArgs = {
 export type MutationProjectUpdateItemsArgs = {
   campaignIds: Array<Scalars['Int']>;
   id: Scalars['Int'];
+};
+
+
+export type MutationSatispayActivateArgs = {
+  authenticationCode: Scalars['String'];
 };
 
 
@@ -1366,8 +1562,15 @@ export type MutationSupporterUpdateArgs = {
 };
 
 
+export type MutationTemplateCloneArgs = {
+  name: Scalars['String'];
+  parentThemeUuid: Scalars['String'];
+  sourceId: Scalars['Int'];
+};
+
+
 export type MutationTerminalConnectionTokenCreateArgs = {
-  locationId: Scalars['String'];
+  locationId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1495,12 +1698,15 @@ export type Notification = {
 
 export enum NotificationCode {
   CheckoutSendLink = 'CHECKOUT_SEND_LINK',
+  DonationAbandoned = 'DONATION_ABANDONED',
+  DonationInstructions = 'DONATION_INSTRUCTIONS',
   DonationReceived = 'DONATION_RECEIVED',
   DonationRefunded = 'DONATION_REFUNDED',
   P2PDonationReceived = 'P2P_DONATION_RECEIVED',
   P2PWelcome = 'P2P_WELCOME',
   StaffDonationReceived = 'STAFF_DONATION_RECEIVED',
   StaffDonationRefunded = 'STAFF_DONATION_REFUNDED',
+  SupporterLogin = 'SUPPORTER_LOGIN',
   TaxCertificate = 'TAX_CERTIFICATE'
 }
 
@@ -1519,7 +1725,7 @@ export enum NotificationMethods {
 }
 
 export type NotificationSendInput = {
-  checkoutId?: InputMaybe<Scalars['Int']>;
+  checkoutId?: InputMaybe<Scalars['String']>;
   donationId?: InputMaybe<Scalars['Int']>;
   message?: InputMaybe<Scalars['String']>;
   recipient: Scalars['String'];
@@ -1603,10 +1809,15 @@ export type OrganizationSenderEmailStatus = {
   __typename?: 'OrganizationSenderEmailStatus';
   dkim: Scalars['Boolean'];
   dkimValue?: Maybe<Scalars['String']>;
+  readyToSend?: Maybe<Scalars['Boolean']>;
   spf: Scalars['Boolean'];
   spfValue?: Maybe<Scalars['String']>;
   verificationString?: Maybe<Scalars['String']>;
   verified: Scalars['Boolean'];
+};
+
+export type OrganizationsFilters = {
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type Page = {
@@ -1679,9 +1890,11 @@ export type PaperDocument = {
   __typename?: 'PaperDocument';
   code: PaperDocumentCode;
   content?: Maybe<Scalars['String']>;
+  contextFields: Array<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   group: Scalars['String'];
   name: Scalars['String'];
+  previewUrl: Scalars['String'];
   style?: Maybe<Scalars['String']>;
 };
 
@@ -1696,6 +1909,7 @@ export type PaperDocumentInput = {
 
 export type PayPalAccount = {
   __typename?: 'PayPalAccount';
+  hasPayments: Scalars['Boolean'];
   isEnabled?: Maybe<Scalars['Boolean']>;
   merchantId?: Maybe<Scalars['String']>;
   paymentsReceivable?: Maybe<Scalars['Boolean']>;
@@ -1746,6 +1960,7 @@ export type PaymentFiltersInput = {
   payemntDate?: InputMaybe<DateRange>;
   paymentMethod?: InputMaybe<Scalars['Int']>;
   q?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Array<PaymentState>>;
   supporter?: InputMaybe<Scalars['Int']>;
 };
 
@@ -1770,6 +1985,7 @@ export type PaymentMethodResponse = {
 export enum PaymentProcessor {
   Manual = 'MANUAL',
   Paypal = 'PAYPAL',
+  Satispay = 'SATISPAY',
   Stripe = 'STRIPE'
 }
 
@@ -1786,6 +2002,54 @@ export enum PaymentState {
   Refunded = 'REFUNDED'
 }
 
+export type PeerCampaign = {
+  __typename?: 'PeerCampaign';
+  campaign?: Maybe<Campaign>;
+  createDate: Scalars['DateTime'];
+  customMessage?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  sitefrontUrl: Scalars['String'];
+  slug?: Maybe<Scalars['String']>;
+  supporter?: Maybe<Supporter>;
+  supporterName?: Maybe<Scalars['String']>;
+  updateDate: Scalars['DateTime'];
+};
+
+export type PeerCampaignConnection = {
+  __typename?: 'PeerCampaignConnection';
+  edges: Array<PeerCampaignEdge>;
+  pageInfo: PageInfo;
+};
+
+export type PeerCampaignEdge = {
+  __typename?: 'PeerCampaignEdge';
+  cursor: Scalars['String'];
+  node: PeerCampaign;
+};
+
+export type PeerCampaignFilters = {
+  channels?: InputMaybe<Array<Scalars['String']>>;
+  order?: InputMaybe<Scalars['String']>;
+  q?: InputMaybe<Scalars['String']>;
+  supporterId?: InputMaybe<Scalars['Int']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  tagsNot?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type PeerCampaignInput = {
+  campaignId: Scalars['Int'];
+  customMessage?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
+  supporterId: Scalars['Int'];
+  supporterName?: InputMaybe<Scalars['String']>;
+};
+
+export type PeerCampaignResponse = {
+  __typename?: 'PeerCampaignResponse';
+  peerCampaign?: Maybe<PeerCampaign>;
+  userErrors?: Maybe<Array<UserError>>;
+};
+
 export type PendingSubscription = {
   __typename?: 'PendingSubscription';
   clientSecret: Scalars['String'];
@@ -1796,8 +2060,18 @@ export type PendingSubscription = {
 export type Plan = {
   __typename?: 'Plan';
   interval: Scalars['String'];
+  items: Array<PlanItem>;
   nextPaymentAt: Scalars['Int'];
   paymentMethod?: Maybe<PlanPaymentMethod>;
+  planType: BillingPlanType;
+};
+
+export type PlanItem = {
+  __typename?: 'PlanItem';
+  amount: Scalars['Int'];
+  currency: Currencies;
+  name: Scalars['String'];
+  quantity: Scalars['Int'];
 };
 
 export type PlanPaymentMethod = {
@@ -1928,6 +2202,8 @@ export enum ProjectType {
 
 export type Query = {
   __typename?: 'Query';
+  activities: ActivityConnection;
+  activity: Activity;
   application: Application;
   applications: Array<Application>;
   applicationsAvailable: Array<Application>;
@@ -1936,6 +2212,7 @@ export type Query = {
   asset?: Maybe<Asset>;
   assetLayout?: Maybe<Asset>;
   assets: Array<Asset>;
+  billingPlans?: Maybe<Plan>;
   blog: Blog;
   blogs: BlogConnection;
   campaign: Campaign;
@@ -1970,11 +2247,15 @@ export type Query = {
   pages: PageConnection;
   paperDocument: PaperDocument;
   payment: Payment;
+  paymentMethods: Array<PaymentMethod>;
   payments: PaymentConnection;
   paypal?: Maybe<PayPalAccount>;
+  peerCampaign: PeerCampaign;
+  peerCampaigns: PeerCampaignConnection;
   plan?: Maybe<Plan>;
   project: Project;
   projects: ProjectConnection;
+  satispay?: Maybe<SatispayAccount>;
   segment: Segment;
   segments: SegmentConnection;
   staff: Staff;
@@ -2005,6 +2286,17 @@ export type Query = {
   webhook: Webhook;
   webhooks: Array<Webhook>;
   website: Website;
+};
+
+
+export type QueryActivitiesArgs = {
+  filters?: InputMaybe<ActivityFilters>;
+  pagination?: InputMaybe<PaginationInput>;
+};
+
+
+export type QueryActivityArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -2075,7 +2367,7 @@ export type QueryCampaignsArgs = {
 
 
 export type QueryCheckoutArgs = {
-  id: Scalars['Int'];
+  token: Scalars['String'];
 };
 
 
@@ -2170,6 +2462,11 @@ export type QueryNotificationArgs = {
 };
 
 
+export type QueryOrganizationsArgs = {
+  filters?: InputMaybe<OrganizationsFilters>;
+};
+
+
 export type QueryPageArgs = {
   id: Scalars['Int'];
 };
@@ -2183,6 +2480,7 @@ export type QueryPagesArgs = {
 
 export type QueryPaperDocumentArgs = {
   code: PaperDocumentCode;
+  key?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2193,6 +2491,17 @@ export type QueryPaymentArgs = {
 
 export type QueryPaymentsArgs = {
   filters?: InputMaybe<PaymentFiltersInput>;
+  pagination?: InputMaybe<PaginationInput>;
+};
+
+
+export type QueryPeerCampaignArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryPeerCampaignsArgs = {
+  filters?: InputMaybe<PeerCampaignFilters>;
   pagination?: InputMaybe<PaginationInput>;
 };
 
@@ -2329,6 +2638,11 @@ export type QueryWebhookArgs = {
   id: Scalars['Int'];
 };
 
+export type SatispayAccount = {
+  __typename?: 'SatispayAccount';
+  keyId: Scalars['String'];
+};
+
 export type Section = {
   __typename?: 'Section';
   blockOrder: Array<Scalars['String']>;
@@ -2416,6 +2730,12 @@ export type SegmentResponse = {
 export enum Sex {
   Female = 'FEMALE',
   Male = 'MALE'
+}
+
+export enum SexFilter {
+  Female = 'FEMALE',
+  Male = 'MALE',
+  NotSpecified = 'NOT_SPECIFIED'
 }
 
 export type Staff = {
@@ -2678,27 +2998,31 @@ export type SupporterFiltersInput = {
   city?: InputMaybe<Scalars['String']>;
   country?: InputMaybe<Scalars['String']>;
   createDate?: InputMaybe<DateRange>;
-  dateOfBirth?: InputMaybe<Scalars['Date']>;
+  dateOfBirth?: InputMaybe<DateRange>;
   email?: InputMaybe<Scalars['String']>;
   emailMarketing?: InputMaybe<Scalars['Boolean']>;
   firstDonationDate?: InputMaybe<DateRange>;
   haveEmail?: InputMaybe<Scalars['Boolean']>;
   havePhone?: InputMaybe<Scalars['Boolean']>;
+  haveSsn?: InputMaybe<Scalars['Boolean']>;
+  haveVat?: InputMaybe<Scalars['Boolean']>;
   ids?: InputMaybe<Array<Scalars['Int']>>;
   isOneoffSupporter?: InputMaybe<Scalars['Boolean']>;
   isRegularSupporter?: InputMaybe<Scalars['Boolean']>;
   lastDonationDate?: InputMaybe<DateRange>;
   order?: InputMaybe<Scalars['String']>;
   phoneMarketing?: InputMaybe<Scalars['Boolean']>;
+  placeOfBirth?: InputMaybe<Scalars['String']>;
   postalMarketing?: InputMaybe<Scalars['Boolean']>;
   q?: InputMaybe<Scalars['String']>;
   query?: InputMaybe<Scalars['String']>;
+  sex?: InputMaybe<SexFilter>;
   smsMarketing?: InputMaybe<Scalars['Boolean']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   tagsNot?: InputMaybe<Array<Scalars['String']>>;
   totalDonated?: InputMaybe<IntRange>;
   totalDonations?: InputMaybe<IntRange>;
-  type?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<SupporterType>;
 };
 
 export type SupporterInput = {
@@ -2810,34 +3134,59 @@ export type ThemesFiltersInput = {
   isPublished?: Scalars['Boolean'];
 };
 
+export type TimelineActivityEvent = {
+  __typename?: 'TimelineActivityEvent';
+  activity?: Maybe<Activity>;
+  createDate: Scalars['DateTime'];
+  eventDate: Scalars['DateTime'];
+  id: Scalars['Int'];
+  type: TimelineEventTopic;
+};
+
 export type TimelineBasicEvent = {
   __typename?: 'TimelineBasicEvent';
   createDate: Scalars['DateTime'];
+  eventDate: Scalars['DateTime'];
   id: Scalars['Int'];
-  type: EventTopic;
-};
-
-export type TimelineCommentAuthor = {
-  __typename?: 'TimelineCommentAuthor';
-  avatar?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
+  payload: Scalars['JSON'];
+  type: TimelineEventTopic;
 };
 
 export type TimelineCommentEvent = {
   __typename?: 'TimelineCommentEvent';
-  author: TimelineCommentAuthor;
   comment?: Maybe<Comment>;
   createDate: Scalars['DateTime'];
+  eventDate: Scalars['DateTime'];
   id: Scalars['Int'];
-  message: Scalars['String'];
-  type: EventTopic;
+  type: TimelineEventTopic;
 };
 
 export enum TimelineEventSubject {
   Checkout = 'CHECKOUT',
   Donation = 'DONATION',
   Supporter = 'SUPPORTER'
+}
+
+export enum TimelineEventTopic {
+  ActivityCreated = 'ACTIVITY_CREATED',
+  ActivityDeleted = 'ACTIVITY_DELETED',
+  ActivityUpdated = 'ACTIVITY_UPDATED',
+  CampaignCreated = 'CAMPAIGN_CREATED',
+  CampaignDeleted = 'CAMPAIGN_DELETED',
+  CampaignUpdated = 'CAMPAIGN_UPDATED',
+  CheckoutClosed = 'CHECKOUT_CLOSED',
+  CheckoutCreated = 'CHECKOUT_CREATED',
+  CheckoutUpdated = 'CHECKOUT_UPDATED',
+  CommentCreated = 'COMMENT_CREATED',
+  DonationCreated = 'DONATION_CREATED',
+  DonationUpdated = 'DONATION_UPDATED',
+  PaymentCreated = 'PAYMENT_CREATED',
+  PaymentUpdated = 'PAYMENT_UPDATED',
+  SupporterCreated = 'SUPPORTER_CREATED',
+  SupporterDeleted = 'SUPPORTER_DELETED',
+  SupporterDonationCreated = 'SUPPORTER_DONATION_CREATED',
+  SupporterUpdated = 'SUPPORTER_UPDATED',
+  TotemRegistered = 'TOTEM_REGISTERED'
 }
 
 export type TimelineFilterInput = {
@@ -2851,6 +3200,7 @@ export type Totem = {
   cover?: Maybe<Media>;
   deviceId: Scalars['String'];
   id: Scalars['Int'];
+  mandatorySupporter: Scalars['Boolean'];
   name: Scalars['String'];
   terminal?: Maybe<StripeTerminal>;
   terminalId: Scalars['String'];
@@ -2872,6 +3222,7 @@ export type TotemInput = {
   campaignId?: InputMaybe<Scalars['Int']>;
   coverId?: InputMaybe<Scalars['Int']>;
   deviceId: Scalars['String'];
+  mandatorySupporter?: Scalars['Boolean'];
   name: Scalars['String'];
   terminalId: Scalars['String'];
 };
@@ -2926,12 +3277,29 @@ export enum WebDocumentVisibility {
 export type Webhook = {
   __typename?: 'Webhook';
   id: Scalars['Int'];
-  topics: Array<EventTopic>;
+  topics: Array<WebhookEventTopic>;
   url: Scalars['String'];
 };
 
+export enum WebhookEventTopic {
+  CampaignCreated = 'CAMPAIGN_CREATED',
+  CampaignDeleted = 'CAMPAIGN_DELETED',
+  CampaignUpdated = 'CAMPAIGN_UPDATED',
+  CheckoutClosed = 'CHECKOUT_CLOSED',
+  CheckoutCreated = 'CHECKOUT_CREATED',
+  CheckoutPaid = 'CHECKOUT_PAID',
+  CheckoutUpdated = 'CHECKOUT_UPDATED',
+  DonationCreated = 'DONATION_CREATED',
+  DonationUpdated = 'DONATION_UPDATED',
+  PaymentCreated = 'PAYMENT_CREATED',
+  PaymentUpdated = 'PAYMENT_UPDATED',
+  SupporterCreated = 'SUPPORTER_CREATED',
+  SupporterDeleted = 'SUPPORTER_DELETED',
+  SupporterUpdated = 'SUPPORTER_UPDATED'
+}
+
 export type WebhookInput = {
-  topics: Array<EventTopic>;
+  topics: Array<WebhookEventTopic>;
   url: Scalars['String'];
 };
 
