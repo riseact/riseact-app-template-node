@@ -56,7 +56,7 @@ async function createServer() {
   }
 
   server.listen(process.env.SERVER_PORT || 3000, () => {
-    console.log(`⚡️ Server is running!`);
+    console.log(`⚡️ Server is running!`, `Open your app from Riseact dashboard`);
   });
 }
 
