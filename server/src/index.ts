@@ -17,12 +17,12 @@ async function createServer() {
   // Create the Riseact SDK instance with the client ID and client secret generated from Riseact
   const riseact = await RiseactSDK(RiseactConfig);
 
-  // Uncomment the following line to enable the GraphQL Playground
-  app.use(cors({ origin: true, credentials: true }));
+  // Enable CORS and JSON body parsing
+  app.use(cors({ origin: true, credentials: true }), express.json());
 
-  // Register a webhook to listen to the CampaignCreated events
+  // Register a webhook to listen to the SupporterCreated events
   app.use(
-    riseact.network.registerWebhook(WebhookEventTopic.CampaignCreated, (data) => {
+    riseact.network.registerWebhook(WebhookEventTopic.SupporterCreated, (data) => {
       console.log('Webhook received', data);
     }),
   );
@@ -56,7 +56,9 @@ async function createServer() {
   }
 
   server.listen(process.env.SERVER_PORT || 3000, () => {
-    console.log(`⚡️ Server is running!`, `Open your app from Riseact dashboard`);
+    console.log(
+      `⚡️ Server is running! Open your app from Riseact dashboard. Your current ngrok URL is ${process.env.RISEACT_APP_URL}`,
+    );
   });
 }
 
