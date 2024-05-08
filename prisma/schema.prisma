@@ -12,6 +12,7 @@ datasource db {
 
 model OrganizationCredentials {
   organizationId Int @id
+  organizationSlug String
   accessToken String
   refreshToken String
   clientToken String

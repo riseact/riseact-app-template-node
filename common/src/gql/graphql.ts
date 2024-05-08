@@ -433,6 +433,7 @@ export type Checkout = {
   donationFrequency?: Maybe<Frequency>;
   enabledPaymentMethods: Array<PaymentMethod>;
   id: Scalars['Int'];
+  recoveryMailSentDate?: Maybe<Scalars['DateTime']>;
   state: CheckoutState;
   supporter?: Maybe<Supporter>;
   supporterAddress?: Maybe<Scalars['String']>;
@@ -650,6 +651,7 @@ export type Donation = {
   createDate: Scalars['DateTime'];
   frequency?: Maybe<Frequency>;
   id: Scalars['Int'];
+  isPublic: Scalars['Boolean'];
   note?: Maybe<Scalars['String']>;
   paymentMethod?: Maybe<PaymentMethod>;
   state: DonationState;
@@ -692,11 +694,12 @@ export type DonationFiltersInput = {
 };
 
 export type DonationInput = {
-  amount: Scalars['Float'];
+  amount?: InputMaybe<Scalars['Float']>;
   device?: InputMaybe<Scalars['String']>;
   frequency?: InputMaybe<Frequency>;
+  isPublic?: InputMaybe<Scalars['Boolean']>;
   note?: InputMaybe<Scalars['String']>;
-  tags: Array<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type DonationPaymentInput = {
@@ -976,6 +979,7 @@ export type Mutation = {
   checkoutComplete: CheckoutResponse;
   checkoutCreate: CheckoutResponse;
   checkoutRegisterPayment: CheckoutResponse;
+  checkoutSendRecoveryEmail: CheckoutResponse;
   checkoutUpdate: CheckoutResponse;
   commentCreate: CommentResponse;
   commentDelete: CommentResponse;
@@ -1029,6 +1033,9 @@ export type Mutation = {
   projectRemoveItem: ProjectResponse;
   projectUpdate: ProjectResponse;
   projectUpdateItems: ProjectResponse;
+  redirectsCreate: RedirectResponse;
+  redirectsDelete: RedirectResponse;
+  redirectsUpdate: RedirectResponse;
   satispayActivate: SatispayAccount;
   segmentCreate: SegmentResponse;
   segmentDelete: SegmentResponse;
@@ -1058,13 +1065,14 @@ export type Mutation = {
   terminalUpdateLabel: StripeTerminal;
   themeCreate: Theme;
   themeDelete: Theme;
-  themeDownload: Theme;
   themeDuplicate: Theme;
+  themeGenerateDownload: Scalars['String'];
   themeInitDevelopment: Theme;
   themePublish: Theme;
   themePublishDevelopment: Theme;
   themeUpdate: Theme;
   themeUpgrade: Theme;
+  themeUpload: Theme;
   totemDelete: TotemResponse;
   totemRegister: TotemResponse;
   webhooksCreate: Webhook;
@@ -1200,6 +1208,11 @@ export type MutationCheckoutCreateArgs = {
 
 export type MutationCheckoutRegisterPaymentArgs = {
   data: CheckoutPaymentInput;
+  token: Scalars['String'];
+};
+
+
+export type MutationCheckoutSendRecoveryEmailArgs = {
   token: Scalars['String'];
 };
 
@@ -1473,6 +1486,22 @@ export type MutationProjectUpdateItemsArgs = {
 };
 
 
+export type MutationRedirectsCreateArgs = {
+  data: RedirectInput;
+};
+
+
+export type MutationRedirectsDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRedirectsUpdateArgs = {
+  data: RedirectInput;
+  id: Scalars['Int'];
+};
+
+
 export type MutationSatispayActivateArgs = {
   authenticationCode: Scalars['String'];
 };
@@ -1616,12 +1645,12 @@ export type MutationThemeDeleteArgs = {
 };
 
 
-export type MutationThemeDownloadArgs = {
+export type MutationThemeDuplicateArgs = {
   uuid: Scalars['String'];
 };
 
 
-export type MutationThemeDuplicateArgs = {
+export type MutationThemeGenerateDownloadArgs = {
   uuid: Scalars['String'];
 };
 
@@ -1650,6 +1679,11 @@ export type MutationThemeUpdateArgs = {
 
 export type MutationThemeUpgradeArgs = {
   uuid: Scalars['String'];
+};
+
+
+export type MutationThemeUploadArgs = {
+  file: Scalars['Upload'];
 };
 
 
@@ -2255,6 +2289,8 @@ export type Query = {
   plan?: Maybe<Plan>;
   project: Project;
   projects: ProjectConnection;
+  redirect: Redirect;
+  redirects: RedirectConnection;
   satispay?: Maybe<SatispayAccount>;
   segment: Segment;
   segments: SegmentConnection;
@@ -2517,6 +2553,17 @@ export type QueryProjectsArgs = {
 };
 
 
+export type QueryRedirectArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryRedirectsArgs = {
+  filters?: InputMaybe<RedirectsFiltersInput>;
+  pagination?: InputMaybe<PaginationInput>;
+};
+
+
 export type QuerySegmentArgs = {
   id: Scalars['Int'];
 };
@@ -2636,6 +2683,40 @@ export type QueryUnsplashArgs = {
 
 export type QueryWebhookArgs = {
   id: Scalars['Int'];
+};
+
+export type Redirect = {
+  __typename?: 'Redirect';
+  destinationUrl: Scalars['String'];
+  id: Scalars['Int'];
+  sourcePath: Scalars['String'];
+};
+
+export type RedirectConnection = {
+  __typename?: 'RedirectConnection';
+  edges: Array<RedirectEdge>;
+  pageInfo: PageInfo;
+};
+
+export type RedirectEdge = {
+  __typename?: 'RedirectEdge';
+  cursor: Scalars['String'];
+  node: Redirect;
+};
+
+export type RedirectInput = {
+  destinationUrl: Scalars['String'];
+  sourcePath: Scalars['String'];
+};
+
+export type RedirectResponse = {
+  __typename?: 'RedirectResponse';
+  redirect?: Maybe<Redirect>;
+  userErrors?: Maybe<Array<UserError>>;
+};
+
+export type RedirectsFiltersInput = {
+  q?: InputMaybe<Scalars['String']>;
 };
 
 export type SatispayAccount = {
