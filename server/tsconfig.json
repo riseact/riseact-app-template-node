@@ -73,6 +73,6 @@
         "path": "../common",
       },
     ],
-    "include": ["src/**/*", "../common/src/**/*"],
+    "include": ["src/**/*", "../common/src/**/*", "env.d.ts"],
   }
   

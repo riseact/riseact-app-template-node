@@ -16,11 +16,16 @@ export type Scalars = {
   Date: any;
   /** Date with time (isoformat) */
   DateTime: any;
-  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](https://ecma-international.org/wp-content/uploads/ECMA-404_2nd_edition_december_2017.pdf). */
   JSON: any;
   Upload: any;
   /** Represents NULL values */
   Void: any;
+};
+
+export type AccessToken = {
+  __typename?: 'AccessToken';
+  token: Scalars['String'];
 };
 
 export type Activity = {
@@ -41,7 +46,8 @@ export enum ActivityCategory {
   Meeting = 'MEETING',
   PhoneCall = 'PHONE_CALL',
   Reminder = 'REMINDER',
-  Todo = 'TODO'
+  Todo = 'TODO',
+  Whatsapp = 'WHATSAPP'
 }
 
 export type ActivityConnection = {
@@ -55,7 +61,7 @@ export type ActivityCreateInput = {
   deadlineDate?: InputMaybe<Scalars['Date']>;
   doneDate?: InputMaybe<Scalars['Date']>;
   note?: InputMaybe<Scalars['String']>;
-  staffId: Scalars['Int'];
+  staffId?: InputMaybe<Scalars['Int']>;
   subject: ActivitySubject;
   subjectId: Scalars['Int'];
 };
@@ -103,10 +109,13 @@ export type ActivityUpdateInput = {
 
 export type Application = {
   __typename?: 'Application';
+  accessToken: AccessToken;
   appUrl?: Maybe<Scalars['String']>;
   authorEmail?: Maybe<Scalars['String']>;
   authorHomepageUrl?: Maybe<Scalars['String']>;
   authorName?: Maybe<Scalars['String']>;
+  clientId: Scalars['String'];
+  clientSecret: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['Int'];
   installUrl?: Maybe<Scalars['String']>;
@@ -114,6 +123,8 @@ export type Application = {
   isInstalled: Scalars['Boolean'];
   logoUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  partner?: Maybe<Scalars['String']>;
+  permissions: Array<StaffPermission>;
   type: ApplicationType;
 };
 
@@ -121,6 +132,12 @@ export type ApplicationFilters = {
   installed?: InputMaybe<Scalars['Boolean']>;
   q?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<ApplicationType>;
+};
+
+export type ApplicationPrivateInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  permissions?: InputMaybe<Array<StaffPermission>>;
 };
 
 export enum ApplicationType {
@@ -141,6 +158,7 @@ export type Article = {
   content?: Maybe<Scalars['String']>;
   cover?: Maybe<Media>;
   createDate: Scalars['DateTime'];
+  customfields: Array<CustomField>;
   id: Scalars['Int'];
   seoDescription?: Maybe<Scalars['String']>;
   seoTitle?: Maybe<Scalars['String']>;
@@ -166,15 +184,16 @@ export type ArticleEdge = {
 };
 
 export type ArticleInput = {
-  blogId?: Scalars['Int'];
+  blogId?: InputMaybe<Scalars['Int']>;
   content?: InputMaybe<Scalars['String']>;
   coverId?: InputMaybe<Scalars['Int']>;
+  customfields?: InputMaybe<Array<CustomFieldInput>>;
   seoDescription?: InputMaybe<Scalars['String']>;
   seoTitle?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   template?: InputMaybe<Scalars['String']>;
-  title: Scalars['String'];
-  visibility?: WebDocumentVisibility;
+  title?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<WebDocumentVisibility>;
 };
 
 export type ArticlesFiltersInput = {
@@ -229,15 +248,13 @@ export type AssetsFiltersInput = {
   themeUuid?: InputMaybe<Scalars['String']>;
 };
 
-export enum BillingCycle {
-  Annual = 'ANNUAL',
-  Monthly = 'MONTHLY'
-}
-
 export enum BillingPlanType {
   Development = 'DEVELOPMENT',
   Grow = 'GROW',
   Hero = 'HERO',
+  Master = 'MASTER',
+  PayAsYouGo = 'PAY_AS_YOU_GO',
+  Platform = 'PLATFORM',
   Team = 'TEAM'
 }
 
@@ -266,6 +283,7 @@ export type Blog = {
   content?: Maybe<Scalars['String']>;
   cover?: Maybe<Media>;
   createDate: Scalars['DateTime'];
+  customfields: Array<CustomField>;
   id: Scalars['Int'];
   seoDescription?: Maybe<Scalars['String']>;
   seoTitle?: Maybe<Scalars['String']>;
@@ -293,12 +311,13 @@ export type BlogEdge = {
 export type BlogInput = {
   content?: InputMaybe<Scalars['String']>;
   coverId?: InputMaybe<Scalars['Int']>;
+  customfields?: InputMaybe<Array<CustomFieldInput>>;
   seoDescription?: InputMaybe<Scalars['String']>;
   seoTitle?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   template?: InputMaybe<Scalars['String']>;
-  title: Scalars['String'];
-  visibility?: WebDocumentVisibility;
+  title?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<WebDocumentVisibility>;
 };
 
 export type BlogsFiltersInput = {
@@ -322,6 +341,7 @@ export type Campaign = {
   costExamples: Array<CostExample>;
   cover?: Maybe<Media>;
   createDate: Scalars['DateTime'];
+  customfields: Array<CustomField>;
   defaultAmount?: Maybe<Scalars['Float']>;
   defaultSubscriptionAmount?: Maybe<Scalars['Float']>;
   excludedChannels: Array<Scalars['Int']>;
@@ -336,7 +356,9 @@ export type Campaign = {
   minAmount?: Maybe<Scalars['Float']>;
   minSubscriptionAmount?: Maybe<Scalars['Float']>;
   note?: Maybe<Scalars['String']>;
+  privacyFields: Array<PrivacyDefinition>;
   privacyNote?: Maybe<Scalars['String']>;
+  receiptNotificationId?: Maybe<Scalars['Int']>;
   requiredFields: Array<Scalars['String']>;
   seoDescription?: Maybe<Scalars['String']>;
   seoTitle?: Maybe<Scalars['String']>;
@@ -353,6 +375,67 @@ export type Campaign = {
   visibility: WebDocumentVisibility;
 };
 
+export type CampaignComment = {
+  __typename?: 'CampaignComment';
+  anonymous: Scalars['Boolean'];
+  campaign: Campaign;
+  createDate: Scalars['DateTime'];
+  id: Scalars['Int'];
+  message: Scalars['String'];
+  peerCampaign?: Maybe<PeerCampaign>;
+  public: Scalars['Boolean'];
+  status: CampaignCommentStatus;
+  supporter: Supporter;
+  updateDate: Scalars['DateTime'];
+};
+
+export type CampaignCommentConnection = {
+  __typename?: 'CampaignCommentConnection';
+  edges: Array<CampaignCommentEdge>;
+  pageInfo: PageInfo;
+};
+
+export type CampaignCommentCreateInput = {
+  anonymous?: Scalars['Boolean'];
+  donationId: Scalars['Int'];
+  message?: Scalars['String'];
+  public?: Scalars['Boolean'];
+  status?: CampaignCommentStatus;
+};
+
+export type CampaignCommentEdge = {
+  __typename?: 'CampaignCommentEdge';
+  cursor: Scalars['String'];
+  node: CampaignComment;
+};
+
+export type CampaignCommentResponse = {
+  __typename?: 'CampaignCommentResponse';
+  comment?: Maybe<CampaignComment>;
+  userErrors?: Maybe<Array<UserError>>;
+};
+
+export enum CampaignCommentStatus {
+  Approved = 'APPROVED',
+  Pending = 'PENDING',
+  Rejected = 'REJECTED'
+}
+
+export type CampaignCommentUpdateInput = {
+  anonymous?: InputMaybe<Scalars['Boolean']>;
+  message?: InputMaybe<Scalars['String']>;
+  public?: InputMaybe<Scalars['Boolean']>;
+  status?: InputMaybe<CampaignCommentStatus>;
+};
+
+export type CampaignCommentsFilters = {
+  campaignId?: InputMaybe<Scalars['Int']>;
+  donationId?: InputMaybe<Scalars['Int']>;
+  q?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<CampaignCommentStatus>;
+  supporterId?: InputMaybe<Scalars['Int']>;
+};
+
 export type CampaignConnection = {
   __typename?: 'CampaignConnection';
   edges: Array<CampaignEdge>;
@@ -367,6 +450,7 @@ export type CampaignEdge = {
 
 export type CampaignFilters = {
   channels?: InputMaybe<Array<Scalars['String']>>;
+  customfields?: InputMaybe<Array<CustomFieldEntityFilter>>;
   ids?: InputMaybe<Array<Scalars['Int']>>;
   order?: InputMaybe<Scalars['String']>;
   q?: InputMaybe<Scalars['String']>;
@@ -383,8 +467,9 @@ export type CampaignInput = {
   asksSubscription?: InputMaybe<Array<Scalars['Float']>>;
   code?: InputMaybe<Scalars['String']>;
   content?: InputMaybe<Scalars['String']>;
-  costExamples: Array<CostExampleInput>;
+  costExamples?: InputMaybe<Array<CostExampleInput>>;
   coverId?: InputMaybe<Scalars['Int']>;
+  customfields?: InputMaybe<Array<CustomFieldInput>>;
   defaultAmount?: InputMaybe<Scalars['Float']>;
   defaultSubscriptionAmount?: InputMaybe<Scalars['Float']>;
   excludedChannels?: InputMaybe<Array<Scalars['Int']>>;
@@ -397,16 +482,18 @@ export type CampaignInput = {
   maxSubscriptionAmount?: InputMaybe<Scalars['Float']>;
   minAmount?: InputMaybe<Scalars['Float']>;
   minSubscriptionAmount?: InputMaybe<Scalars['Float']>;
+  privacyFields?: InputMaybe<Array<Scalars['String']>>;
   privacyNote?: InputMaybe<Scalars['String']>;
+  receiptNotificationId?: InputMaybe<Scalars['Int']>;
   requiredFields?: InputMaybe<Array<Scalars['String']>>;
   seoDescription?: InputMaybe<Scalars['String']>;
   seoTitle?: InputMaybe<Scalars['String']>;
   shownFields?: InputMaybe<Array<Scalars['String']>>;
   slug?: InputMaybe<Scalars['String']>;
-  tags: Array<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
   template?: InputMaybe<Scalars['String']>;
   thankyouTemplate?: InputMaybe<Scalars['String']>;
-  title: Scalars['String'];
+  title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<CampaignType>;
   visibility?: InputMaybe<WebDocumentVisibility>;
 };
@@ -422,8 +509,15 @@ export enum CampaignType {
   Lead = 'LEAD'
 }
 
+export type ChangePlanResponse = {
+  __typename?: 'ChangePlanResponse';
+  success: Scalars['Boolean'];
+};
+
 export type Checkout = {
   __typename?: 'Checkout';
+  application?: Maybe<Application>;
+  applicationMetadata?: Maybe<Scalars['JSON']>;
   campaign: Campaign;
   checkoutUrl: Scalars['String'];
   completedDate?: Maybe<Scalars['DateTime']>;
@@ -432,7 +526,9 @@ export type Checkout = {
   donationAmount?: Maybe<Scalars['Float']>;
   donationFrequency?: Maybe<Frequency>;
   enabledPaymentMethods: Array<PaymentMethod>;
+  errorMessage?: Maybe<Scalars['String']>;
   id: Scalars['Int'];
+  peerCampaign?: Maybe<PeerCampaign>;
   recoveryMailSentDate?: Maybe<Scalars['DateTime']>;
   state: CheckoutState;
   supporter?: Maybe<Supporter>;
@@ -454,6 +550,7 @@ export type Checkout = {
   supporterPlaceOfBirth?: Maybe<Scalars['String']>;
   supporterPostalCode?: Maybe<Scalars['String']>;
   supporterPrivacy?: Maybe<Scalars['Boolean']>;
+  supporterPrivacyValues?: Maybe<Scalars['Boolean']>;
   supporterSex?: Maybe<Scalars['String']>;
   supporterSsn?: Maybe<Scalars['String']>;
   supporterType?: Maybe<Scalars['String']>;
@@ -480,12 +577,19 @@ export type CheckoutEdge = {
 };
 
 export type CheckoutFilters = {
+  createDate?: InputMaybe<DateRange>;
   order?: InputMaybe<Scalars['String']>;
   q?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<CheckoutState>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  tagsNot?: InputMaybe<Array<Scalars['String']>>;
+  updateDate?: InputMaybe<DateRange>;
 };
 
 export type CheckoutInput = {
   amount?: InputMaybe<Scalars['Float']>;
+  applicationId?: InputMaybe<Scalars['Int']>;
+  applicationMetadata?: InputMaybe<Scalars['JSON']>;
   campaignId?: InputMaybe<Scalars['Int']>;
   device?: InputMaybe<Scalars['String']>;
   donationData?: InputMaybe<DonationInput>;
@@ -603,6 +707,150 @@ export enum Currencies {
   Usd = 'USD'
 }
 
+export type CustomEntityUsage = {
+  __typename?: 'CustomEntityUsage';
+  count: Scalars['Int'];
+  entity: CustomFieldEntity;
+};
+
+export type CustomField = {
+  __typename?: 'CustomField';
+  key: Scalars['String'];
+  meta: CustomFieldDefinition;
+  type: CustomFieldType;
+  value?: Maybe<Scalars['String']>;
+};
+
+export type CustomFieldDefinition = {
+  __typename?: 'CustomFieldDefinition';
+  dateMaxValue?: Maybe<Scalars['Date']>;
+  dateMinValue?: Maybe<Scalars['Date']>;
+  datetimeMaxValue?: Maybe<Scalars['DateTime']>;
+  datetimeMinValue?: Maybe<Scalars['DateTime']>;
+  decimalMaxValue?: Maybe<Scalars['Float']>;
+  decimalMinValue?: Maybe<Scalars['Float']>;
+  description?: Maybe<Scalars['String']>;
+  entity: CustomFieldEntity;
+  hasSitefrontVisibility: Scalars['Boolean'];
+  hidden: Scalars['Boolean'];
+  id: Scalars['Int'];
+  integerMaxValue?: Maybe<Scalars['Int']>;
+  integerMinValue?: Maybe<Scalars['Int']>;
+  key: Scalars['String'];
+  name: Scalars['String'];
+  position: Scalars['Int'];
+  textChoices?: Maybe<Array<Scalars['String']>>;
+  textMaxLength?: Maybe<Scalars['Int']>;
+  textMinLength?: Maybe<Scalars['Int']>;
+  textUseChoices: Scalars['Boolean'];
+  type: CustomFieldType;
+};
+
+export type CustomFieldDefinitionCreateInput = {
+  dateMaxValue?: InputMaybe<Scalars['String']>;
+  dateMinValue?: InputMaybe<Scalars['String']>;
+  datetimeMaxValue?: InputMaybe<Scalars['String']>;
+  datetimeMinValue?: InputMaybe<Scalars['String']>;
+  decimalMaxValue?: InputMaybe<Scalars['Float']>;
+  decimalMinValue?: InputMaybe<Scalars['Float']>;
+  description?: InputMaybe<Scalars['String']>;
+  entity: CustomFieldEntity;
+  hasSitefrontVisibility?: InputMaybe<Scalars['Boolean']>;
+  hidden?: InputMaybe<Scalars['Boolean']>;
+  integerMaxValue?: InputMaybe<Scalars['Int']>;
+  integerMinValue?: InputMaybe<Scalars['Int']>;
+  key: Scalars['String'];
+  name: Scalars['String'];
+  position?: InputMaybe<Scalars['Int']>;
+  textChoices?: InputMaybe<Array<Scalars['String']>>;
+  textMaxLength?: InputMaybe<Scalars['Int']>;
+  textMinLength?: InputMaybe<Scalars['Int']>;
+  textUseChoices?: InputMaybe<Scalars['Boolean']>;
+  type: CustomFieldType;
+};
+
+export type CustomFieldDefinitionResponse = {
+  __typename?: 'CustomFieldDefinitionResponse';
+  customFieldDefinition?: Maybe<CustomFieldDefinition>;
+  userErrors?: Maybe<Array<UserError>>;
+};
+
+export type CustomFieldDefinitionUpdateInput = {
+  dateMaxValue?: InputMaybe<Scalars['String']>;
+  dateMinValue?: InputMaybe<Scalars['String']>;
+  datetimeMaxValue?: InputMaybe<Scalars['String']>;
+  datetimeMinValue?: InputMaybe<Scalars['String']>;
+  decimalMaxValue?: InputMaybe<Scalars['Float']>;
+  decimalMinValue?: InputMaybe<Scalars['Float']>;
+  description?: InputMaybe<Scalars['String']>;
+  hasSitefrontVisibility?: InputMaybe<Scalars['Boolean']>;
+  hidden?: InputMaybe<Scalars['Boolean']>;
+  integerMaxValue?: InputMaybe<Scalars['Int']>;
+  integerMinValue?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Int']>;
+  textChoices?: InputMaybe<Array<Scalars['String']>>;
+  textMaxLength?: InputMaybe<Scalars['Int']>;
+  textMinLength?: InputMaybe<Scalars['Int']>;
+  textUseChoices?: InputMaybe<Scalars['Boolean']>;
+};
+
+export enum CustomFieldEntity {
+  Article = 'ARTICLE',
+  Blog = 'BLOG',
+  Campaign = 'CAMPAIGN',
+  Donation = 'DONATION',
+  Page = 'PAGE',
+  Project = 'PROJECT',
+  Supporter = 'SUPPORTER'
+}
+
+export type CustomFieldEntityFilter = {
+  key: Scalars['String'];
+  operator: CustomFieldEntityFilterOperator;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+export enum CustomFieldEntityFilterOperator {
+  Contains = 'CONTAINS',
+  Endswith = 'ENDSWITH',
+  Eq = 'EQ',
+  Gt = 'GT',
+  Gte = 'GTE',
+  Icontains = 'ICONTAINS',
+  Lt = 'LT',
+  Lte = 'LTE',
+  Neq = 'NEQ',
+  Startswith = 'STARTSWITH'
+}
+
+export type CustomFieldFilters = {
+  entity?: InputMaybe<CustomFieldEntity>;
+  hidden?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CustomFieldInput = {
+  key: Scalars['String'];
+  value?: InputMaybe<Scalars['String']>;
+};
+
+export enum CustomFieldType {
+  Boolean = 'BOOLEAN',
+  Date = 'DATE',
+  Datetime = 'DATETIME',
+  Decimal = 'DECIMAL',
+  File = 'FILE',
+  Integer = 'INTEGER',
+  MultilineText = 'MULTILINE_TEXT',
+  Richtext = 'RICHTEXT',
+  Text = 'TEXT'
+}
+
+export type CustomNotificationInput = {
+  emailSubject?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
 export type CustomerPortal = {
   __typename?: 'CustomerPortal';
   dashboard: Scalars['String'];
@@ -612,6 +860,11 @@ export type CustomerPortal = {
 export type DateRange = {
   end?: InputMaybe<Scalars['Date']>;
   start?: InputMaybe<Scalars['Date']>;
+};
+
+export type DateTimeRange = {
+  end?: InputMaybe<Scalars['DateTime']>;
+  start?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type Domain = {
@@ -649,11 +902,15 @@ export type Donation = {
   completedDate?: Maybe<Scalars['DateTime']>;
   costExample?: Maybe<CostExample>;
   createDate: Scalars['DateTime'];
+  customfields: Array<CustomField>;
+  device?: Maybe<Scalars['String']>;
   frequency?: Maybe<Frequency>;
   id: Scalars['Int'];
   isPublic: Scalars['Boolean'];
   note?: Maybe<Scalars['String']>;
   paymentMethod?: Maybe<PaymentMethod>;
+  peerCampaign?: Maybe<PeerCampaign>;
+  receiptUrl?: Maybe<Scalars['String']>;
   state: DonationState;
   supporter: Supporter;
   tags: Array<Scalars['String']>;
@@ -682,19 +939,24 @@ export type DonationEdge = {
 export type DonationFiltersInput = {
   campaigns?: InputMaybe<Array<Scalars['Int']>>;
   createDate?: InputMaybe<DateRange>;
+  createDatetime?: InputMaybe<DateTimeRange>;
   frequencies?: InputMaybe<Array<Frequency>>;
   order?: InputMaybe<Scalars['String']>;
   paymentMethods?: InputMaybe<Array<Scalars['Int']>>;
+  peerCampaigns?: InputMaybe<Array<Scalars['Int']>>;
   q?: InputMaybe<Scalars['String']>;
   supporterType?: InputMaybe<SupporterType>;
+  supporters?: InputMaybe<Array<Scalars['Int']>>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   tagsNot?: InputMaybe<Array<Scalars['String']>>;
   totalPaid?: InputMaybe<IntRange>;
   totalPayments?: InputMaybe<IntRange>;
+  updateDate?: InputMaybe<DateRange>;
 };
 
 export type DonationInput = {
   amount?: InputMaybe<Scalars['Float']>;
+  customfields?: InputMaybe<Array<CustomFieldInput>>;
   device?: InputMaybe<Scalars['String']>;
   frequency?: InputMaybe<Frequency>;
   isPublic?: InputMaybe<Scalars['Boolean']>;
@@ -772,6 +1034,12 @@ export type FieldOptions = {
   label: Scalars['String'];
   value: Scalars['String'];
 };
+
+export enum FlowType {
+  Anonymous = 'ANONYMOUS',
+  SupporterDataOptional = 'SUPPORTER_DATA_OPTIONAL',
+  SupporterDataRequired = 'SUPPORTER_DATA_REQUIRED'
+}
 
 export type Form = {
   __typename?: 'Form';
@@ -853,12 +1121,14 @@ export type Invite = {
   organization: Organization;
   partnerEmail?: Maybe<Scalars['String']>;
   partnerName?: Maybe<Scalars['String']>;
+  permissions: Array<StaffPermission>;
   role: StaffRole;
   token: Scalars['String'];
 };
 
 export type InviteInput = {
   email: Scalars['String'];
+  permissions?: InputMaybe<Array<StaffPermission>>;
   role: StaffRole;
 };
 
@@ -869,10 +1139,10 @@ export type ManualPaymentInput = {
 };
 
 export type ManualPaymentMethodInput = {
-  channels: Array<Scalars['Int']>;
+  channels?: InputMaybe<Array<Scalars['Int']>>;
   description?: InputMaybe<Scalars['String']>;
-  hasOneoffSupport: Scalars['Boolean'];
-  hasSubscriptionSupport: Scalars['Boolean'];
+  hasOneoffSupport?: InputMaybe<Scalars['Boolean']>;
+  hasSubscriptionSupport?: InputMaybe<Scalars['Boolean']>;
   instructions?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
 };
@@ -960,7 +1230,10 @@ export type Mutation = {
   activityDone: ActivityResponse;
   activityUndone: ActivityResponse;
   activityUpdate: ActivityResponse;
+  applicationCreatePrivate: Application;
+  applicationPrivateRefreshToken: AccessToken;
   applicationUninstall: Application;
+  applicationUpdatePrivate: Application;
   articlesCreate: ArticlesResponse;
   articlesDelete: ArticlesResponse;
   articlesUpdate: ArticlesResponse;
@@ -968,13 +1241,18 @@ export type Mutation = {
   assetDelete: Asset;
   assetDuplicate: Asset;
   assetUpdate: Asset;
+  billingCancelChangePlan: ChangePlanResponse;
+  billingChangePlan: ChangePlanResponse;
   billingCreateCheckoutSession: CheckoutSession;
-  billingSelectPlan: PendingSubscription;
   blogsCreate: BlogsResponse;
   blogsDelete: BlogsResponse;
   blogsUpdate: BlogsResponse;
+  campaignCommentCreate: CampaignCommentResponse;
+  campaignCommentDelete: CampaignCommentResponse;
+  campaignCommentUpdate: CampaignCommentResponse;
   campaignCreate: CampaignResponse;
   campaignDelete: CampaignResponse;
+  campaignDuplicate: CampaignResponse;
   campaignUpdate: CampaignResponse;
   checkoutComplete: CheckoutResponse;
   checkoutCreate: CheckoutResponse;
@@ -984,8 +1262,12 @@ export type Mutation = {
   commentCreate: CommentResponse;
   commentDelete: CommentResponse;
   commentUpdate: CommentResponse;
+  customfieldDefinitionCreate: CustomFieldDefinitionResponse;
+  customfieldDefinitionDelete: CustomFieldDefinitionResponse;
+  customfieldDefinitionUpdate: CustomFieldDefinitionResponse;
   domainsCheckStatus: DomainsResponse;
   domainsConnectExisting: DomainsResponse;
+  domainsDelete: DomainsResponse;
   domainsSetPrimary: DomainsResponse;
   donationBulkDelete: Scalars['Boolean'];
   donationDelete: Donation;
@@ -1001,6 +1283,7 @@ export type Mutation = {
   inviteCreate: Invite;
   inviteResend: Invite;
   inviteRevoke: Invite;
+  inviteUpdate: Invite;
   manualPaymentMethodCreate: PaymentMethodResponse;
   manualPaymentMethodDelete: PaymentMethodResponse;
   manualPaymentMethodUpdate: PaymentMethodResponse;
@@ -1009,6 +1292,7 @@ export type Mutation = {
   menuCreate: MenuResponse;
   menuDelete: MenuResponse;
   menuUpdate: MenuResponse;
+  notificationCreate: Notification;
   notificationSend: Notification;
   notificationUpdate: Notification;
   organizationUpdate: OrganizationResponse;
@@ -1028,6 +1312,9 @@ export type Mutation = {
   peerCampaignCreate: PeerCampaignResponse;
   peerCampaignDelete: PeerCampaignResponse;
   peerCampaignUpdate: PeerCampaignResponse;
+  privacyDefinitionCreate: PrivacyDefinitionResponse;
+  privacyDefinitionDelete: PrivacyDefinitionResponse;
+  privacyDefinitionUpdate: PrivacyDefinitionResponse;
   projectCreate: ProjectResponse;
   projectDelete: ProjectResponse;
   projectRemoveItem: ProjectResponse;
@@ -1041,6 +1328,7 @@ export type Mutation = {
   segmentDelete: SegmentResponse;
   segmentUpdate: SegmentResponse;
   staffSendPasswordReset: StaffResponse;
+  staffSetPermissions: StaffResponse;
   staffUpdate: StaffResponse;
   storeThemeInstall: Theme;
   stripeActivate: StripeAccount;
@@ -1053,7 +1341,10 @@ export type Mutation = {
   supporterDelete: Supporter;
   supporterExport: Scalars['String'];
   supporterImport: Task;
+  supporterMerge: Supporter;
+  supporterRemovePrivacy: SupporterResponse;
   supporterSendTaxCertificate: Supporter;
+  supporterSetPrivacy: SupporterResponse;
   supporterUpdate: Supporter;
   templateClone: Asset;
   terminalConnectionTokenCreate: Scalars['String'];
@@ -1072,7 +1363,7 @@ export type Mutation = {
   themePublishDevelopment: Theme;
   themeUpdate: Theme;
   themeUpgrade: Theme;
-  themeUpload: Theme;
+  themeUpload: ThemeUploadResponse;
   totemDelete: TotemResponse;
   totemRegister: TotemResponse;
   webhooksCreate: Webhook;
@@ -1108,7 +1399,23 @@ export type MutationActivityUpdateArgs = {
 };
 
 
+export type MutationApplicationCreatePrivateArgs = {
+  data: ApplicationPrivateInput;
+};
+
+
+export type MutationApplicationPrivateRefreshTokenArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationApplicationUninstallArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationApplicationUpdatePrivateArgs = {
+  data: ApplicationPrivateInput;
   id: Scalars['Int'];
 };
 
@@ -1151,14 +1458,12 @@ export type MutationAssetUpdateArgs = {
 };
 
 
-export type MutationBillingCreateCheckoutSessionArgs = {
-  cycle: BillingCycle;
+export type MutationBillingChangePlanArgs = {
   planType: BillingPlanType;
 };
 
 
-export type MutationBillingSelectPlanArgs = {
-  cycle: BillingCycle;
+export type MutationBillingCreateCheckoutSessionArgs = {
   planType: BillingPlanType;
 };
 
@@ -1179,12 +1484,33 @@ export type MutationBlogsUpdateArgs = {
 };
 
 
+export type MutationCampaignCommentCreateArgs = {
+  data: CampaignCommentCreateInput;
+};
+
+
+export type MutationCampaignCommentDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCampaignCommentUpdateArgs = {
+  data: CampaignCommentUpdateInput;
+  id: Scalars['Int'];
+};
+
+
 export type MutationCampaignCreateArgs = {
   data: CampaignInput;
 };
 
 
 export type MutationCampaignDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCampaignDuplicateArgs = {
   id: Scalars['Int'];
 };
 
@@ -1239,6 +1565,22 @@ export type MutationCommentUpdateArgs = {
 };
 
 
+export type MutationCustomfieldDefinitionCreateArgs = {
+  data: CustomFieldDefinitionCreateInput;
+};
+
+
+export type MutationCustomfieldDefinitionDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCustomfieldDefinitionUpdateArgs = {
+  data: CustomFieldDefinitionUpdateInput;
+  id: Scalars['Int'];
+};
+
+
 export type MutationDomainsCheckStatusArgs = {
   id: Scalars['Int'];
 };
@@ -1246,6 +1588,11 @@ export type MutationDomainsCheckStatusArgs = {
 
 export type MutationDomainsConnectExistingArgs = {
   data: ExistingDomainInput;
+};
+
+
+export type MutationDomainsDeleteArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -1332,6 +1679,12 @@ export type MutationInviteRevokeArgs = {
 };
 
 
+export type MutationInviteUpdateArgs = {
+  data: InviteInput;
+  id: Scalars['Int'];
+};
+
+
 export type MutationManualPaymentMethodCreateArgs = {
   data: ManualPaymentMethodInput;
 };
@@ -1374,15 +1727,23 @@ export type MutationMenuUpdateArgs = {
 };
 
 
+export type MutationNotificationCreateArgs = {
+  code: NotificationCode;
+  data: CustomNotificationInput;
+};
+
+
 export type MutationNotificationSendArgs = {
   code: NotificationCode;
   data: NotificationSendInput;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationNotificationUpdateArgs = {
   code: NotificationCode;
   data: NotificationInput;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1458,6 +1819,22 @@ export type MutationPeerCampaignUpdateArgs = {
 };
 
 
+export type MutationPrivacyDefinitionCreateArgs = {
+  data: PrivacyDefinitionCreateInput;
+};
+
+
+export type MutationPrivacyDefinitionDeleteArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationPrivacyDefinitionUpdateArgs = {
+  data: PrivacyDefinitionUpdateInput;
+  id: Scalars['Int'];
+};
+
+
 export type MutationProjectCreateArgs = {
   data: ProjectInput;
 };
@@ -1528,6 +1905,12 @@ export type MutationStaffSendPasswordResetArgs = {
 };
 
 
+export type MutationStaffSetPermissionsArgs = {
+  id: Scalars['Int'];
+  permissions: Array<StaffPermission>;
+};
+
+
 export type MutationStaffUpdateArgs = {
   data: StaffInput;
   id: Scalars['Int'];
@@ -1579,9 +1962,28 @@ export type MutationSupporterImportArgs = {
 };
 
 
+export type MutationSupporterMergeArgs = {
+  data: SupporterInput;
+  duplicatesIds: Array<Scalars['Int']>;
+  masterId: Scalars['Int'];
+};
+
+
+export type MutationSupporterRemovePrivacyArgs = {
+  code: Scalars['String'];
+  id: Scalars['Int'];
+};
+
+
 export type MutationSupporterSendTaxCertificateArgs = {
   id: Scalars['Int'];
   method: NotificationMethods;
+};
+
+
+export type MutationSupporterSetPrivacyArgs = {
+  data: SupporterPrivacyInput;
+  id: Scalars['Int'];
 };
 
 
@@ -1721,9 +2123,13 @@ export type Notification = {
   __typename?: 'Notification';
   code: NotificationCode;
   description?: Maybe<Scalars['String']>;
+  emailBcc?: Maybe<Scalars['String']>;
   emailBody?: Maybe<Scalars['String']>;
   emailDesign: Scalars['JSON'];
+  emailReplyTo?: Maybe<Scalars['String']>;
+  emailSender?: Maybe<Scalars['String']>;
   emailSubject?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
   name: Scalars['String'];
   sendByEmail: Scalars['Boolean'];
   sendBySms: Scalars['Boolean'];
@@ -1744,10 +2150,19 @@ export enum NotificationCode {
   TaxCertificate = 'TAX_CERTIFICATE'
 }
 
+export type NotificationFilters = {
+  code?: InputMaybe<NotificationCode>;
+  group?: InputMaybe<Scalars['String']>;
+};
+
 export type NotificationInput = {
+  emailBcc: Scalars['String'];
   emailBody: Scalars['String'];
   emailDesign: Scalars['String'];
-  emailSubject: Scalars['String'];
+  emailReplyTo?: InputMaybe<Scalars['String']>;
+  emailSender?: InputMaybe<Scalars['String']>;
+  emailSubject?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
   sendByEmail: Scalars['Boolean'];
   sendBySms: Scalars['Boolean'];
   smsBody: Scalars['String'];
@@ -1797,6 +2212,7 @@ export type Organization = {
   planType?: Maybe<BillingPlanType>;
   postalCode?: Maybe<Scalars['String']>;
   privacyPolicy?: Maybe<Scalars['String']>;
+  reference: Scalars['String'];
   senderEmail?: Maybe<Scalars['String']>;
   senderEmailStatus: OrganizationSenderEmailStatus;
   sitefrontUrl: Scalars['String'];
@@ -1859,6 +2275,7 @@ export type Page = {
   content?: Maybe<Scalars['String']>;
   cover?: Maybe<Media>;
   createDate: Scalars['DateTime'];
+  customfields: Array<CustomField>;
   id: Scalars['Int'];
   seoDescription?: Maybe<Scalars['String']>;
   seoTitle?: Maybe<Scalars['String']>;
@@ -1895,12 +2312,13 @@ export type PageInfo = {
 export type PageInput = {
   content?: InputMaybe<Scalars['String']>;
   coverId?: InputMaybe<Scalars['Int']>;
+  customfields?: InputMaybe<Array<CustomFieldInput>>;
   seoDescription?: InputMaybe<Scalars['String']>;
   seoTitle?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   template?: InputMaybe<Scalars['String']>;
-  title: Scalars['String'];
-  visibility?: WebDocumentVisibility;
+  title?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<WebDocumentVisibility>;
 };
 
 export type PagesFiltersInput = {
@@ -1963,6 +2381,7 @@ export type Payment = {
   createDate: Scalars['DateTime'];
   donation?: Maybe<Donation>;
   id: Scalars['Int'];
+  netAmount?: Maybe<Scalars['Float']>;
   paymentDate?: Maybe<Scalars['DateTime']>;
   paymentMethod?: Maybe<PaymentMethod>;
   state: PaymentState;
@@ -1989,13 +2408,15 @@ export type PaymentEdge = {
 };
 
 export type PaymentFiltersInput = {
+  createDate?: InputMaybe<DateRange>;
   donation?: InputMaybe<Scalars['Int']>;
   order?: InputMaybe<Scalars['String']>;
-  payemntDate?: InputMaybe<DateRange>;
+  paymentDate?: InputMaybe<DateRange>;
   paymentMethod?: InputMaybe<Scalars['Int']>;
   q?: InputMaybe<Scalars['String']>;
   state?: InputMaybe<Array<PaymentState>>;
   supporter?: InputMaybe<Scalars['Int']>;
+  updateDate?: InputMaybe<DateRange>;
 };
 
 export type PaymentMethod = {
@@ -2039,14 +2460,25 @@ export enum PaymentState {
 export type PeerCampaign = {
   __typename?: 'PeerCampaign';
   campaign?: Maybe<Campaign>;
+  content?: Maybe<Scalars['String']>;
   createDate: Scalars['DateTime'];
   customMessage?: Maybe<Scalars['String']>;
+  goal?: Maybe<Scalars['Float']>;
   id: Scalars['Int'];
+  isGoalEnabled: Scalars['Boolean'];
+  receiptNotificationId?: Maybe<Scalars['Int']>;
+  seoDescription?: Maybe<Scalars['String']>;
+  seoTitle?: Maybe<Scalars['String']>;
   sitefrontUrl: Scalars['String'];
-  slug?: Maybe<Scalars['String']>;
+  slug: Scalars['String'];
   supporter?: Maybe<Supporter>;
   supporterName?: Maybe<Scalars['String']>;
+  template?: Maybe<Scalars['String']>;
+  thankyouTemplate?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
   updateDate: Scalars['DateTime'];
+  url: Scalars['String'];
+  visibility: WebDocumentVisibility;
 };
 
 export type PeerCampaignConnection = {
@@ -2062,7 +2494,9 @@ export type PeerCampaignEdge = {
 };
 
 export type PeerCampaignFilters = {
+  campaignId?: InputMaybe<Scalars['Int']>;
   channels?: InputMaybe<Array<Scalars['String']>>;
+  ids?: InputMaybe<Array<Scalars['Int']>>;
   order?: InputMaybe<Scalars['String']>;
   q?: InputMaybe<Scalars['String']>;
   supporterId?: InputMaybe<Scalars['Int']>;
@@ -2072,10 +2506,21 @@ export type PeerCampaignFilters = {
 
 export type PeerCampaignInput = {
   campaignId: Scalars['Int'];
+  content?: InputMaybe<Scalars['String']>;
+  coverId?: InputMaybe<Scalars['Int']>;
   customMessage?: InputMaybe<Scalars['String']>;
+  goal?: InputMaybe<Scalars['Float']>;
+  isGoalEnabled?: InputMaybe<Scalars['Boolean']>;
+  receiptNotificationId?: InputMaybe<Scalars['Int']>;
+  seoDescription?: InputMaybe<Scalars['String']>;
+  seoTitle?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   supporterId: Scalars['Int'];
   supporterName?: InputMaybe<Scalars['String']>;
+  template?: InputMaybe<Scalars['String']>;
+  thankyouTemplate?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<WebDocumentVisibility>;
 };
 
 export type PeerCampaignResponse = {
@@ -2084,18 +2529,12 @@ export type PeerCampaignResponse = {
   userErrors?: Maybe<Array<UserError>>;
 };
 
-export type PendingSubscription = {
-  __typename?: 'PendingSubscription';
-  clientSecret: Scalars['String'];
-  status: SubscriptionStatus;
-  subscriptionId: Scalars['String'];
-};
-
 export type Plan = {
   __typename?: 'Plan';
   interval: Scalars['String'];
   items: Array<PlanItem>;
   nextPaymentAt: Scalars['Int'];
+  nextPhasePlanType?: Maybe<BillingPlanType>;
   paymentMethod?: Maybe<PlanPaymentMethod>;
   planType: BillingPlanType;
 };
@@ -2120,12 +2559,69 @@ export enum PlanPaymentMethodType {
   Sdd = 'SDD'
 }
 
+export type PrivacyDefinition = {
+  __typename?: 'PrivacyDefinition';
+  code: Scalars['String'];
+  consentScopes: Array<Scalars['String']>;
+  createDate: Scalars['DateTime'];
+  id: Scalars['Int'];
+  isDefault: Scalars['Boolean'];
+  isRequired: Scalars['Boolean'];
+  label: Scalars['String'];
+  message?: Maybe<Scalars['String']>;
+  updateDate: Scalars['DateTime'];
+};
+
+export type PrivacyDefinitionConnection = {
+  __typename?: 'PrivacyDefinitionConnection';
+  edges: Array<PrivacyDefinitionEdge>;
+  pageInfo: PageInfo;
+};
+
+export type PrivacyDefinitionCreateInput = {
+  code: Scalars['String'];
+  consentScopes?: InputMaybe<Array<Scalars['String']>>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
+  isRequired?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  message?: InputMaybe<Scalars['String']>;
+};
+
+export type PrivacyDefinitionEdge = {
+  __typename?: 'PrivacyDefinitionEdge';
+  cursor: Scalars['String'];
+  node: PrivacyDefinition;
+};
+
+export type PrivacyDefinitionFilters = {
+  code?: InputMaybe<Scalars['String']>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
+  isRequired?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+};
+
+export type PrivacyDefinitionResponse = {
+  __typename?: 'PrivacyDefinitionResponse';
+  privacyDefinition?: Maybe<PrivacyDefinition>;
+  userErrors?: Maybe<Array<UserError>>;
+};
+
+export type PrivacyDefinitionUpdateInput = {
+  code?: InputMaybe<Scalars['String']>;
+  consentScopes?: InputMaybe<Array<Scalars['String']>>;
+  isDefault?: InputMaybe<Scalars['Boolean']>;
+  isRequired?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  message?: InputMaybe<Scalars['String']>;
+};
+
 export type Project = {
   __typename?: 'Project';
   campaignsOrder: ProjectCampaignsOrder;
   content?: Maybe<Scalars['String']>;
   cover?: Maybe<Media>;
   createDate: Scalars['DateTime'];
+  customfields: Array<CustomField>;
   id: Scalars['Int'];
   items: Array<ProjectCampaignItem>;
   rules: Array<ProjectRule>;
@@ -2175,18 +2671,19 @@ export type ProjectFilters = {
 };
 
 export type ProjectInput = {
-  campaignsOrder?: ProjectCampaignsOrder;
+  campaignsOrder?: InputMaybe<ProjectCampaignsOrder>;
   content?: InputMaybe<Scalars['String']>;
   coverId?: InputMaybe<Scalars['Int']>;
-  rules: Array<ProjectRuleInput>;
-  rulesMatch?: ProjectRuleMatchType;
+  customfields?: InputMaybe<Array<CustomFieldInput>>;
+  rules?: InputMaybe<Array<ProjectRuleInput>>;
+  rulesMatch?: InputMaybe<ProjectRuleMatchType>;
   seoDescription?: InputMaybe<Scalars['String']>;
   seoTitle?: InputMaybe<Scalars['String']>;
   slug?: InputMaybe<Scalars['String']>;
   template?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
-  type?: ProjectType;
-  visibility?: WebDocumentVisibility;
+  type?: InputMaybe<ProjectType>;
+  visibility?: InputMaybe<WebDocumentVisibility>;
 };
 
 export type ProjectResponse = {
@@ -2250,6 +2747,8 @@ export type Query = {
   blog: Blog;
   blogs: BlogConnection;
   campaign: Campaign;
+  campaignComment: CampaignComment;
+  campaignComments: CampaignCommentConnection;
   campaignTags: StrConnection;
   campaigns: CampaignConnection;
   checkout: Checkout;
@@ -2258,6 +2757,9 @@ export type Query = {
   checkoutsAdminGenerated: CheckoutConnection;
   countries: CountryResponse;
   customerPortal: CustomerPortal;
+  customfieldDefinition: CustomFieldDefinition;
+  customfieldDefinitions: Array<CustomFieldDefinition>;
+  customfieldDefinitionsEntitiesUsage: Array<CustomEntityUsage>;
   domain?: Maybe<Domain>;
   domains: Array<Domain>;
   donation: Donation;
@@ -2265,6 +2767,7 @@ export type Query = {
   donations: DonationConnection;
   form: Form;
   forms: FormConnection;
+  invite: Invite;
   invites: Array<Invite>;
   manualPaymentMethod: PaymentMethod;
   manualPaymentMethods: Array<PaymentMethod>;
@@ -2274,6 +2777,7 @@ export type Query = {
   menuByHandle: Menu;
   menus: Array<Menu>;
   notification: Notification;
+  notifications: Array<Notification>;
   organization: Organization;
   organizations: Array<Organization>;
   owner: Staff;
@@ -2287,6 +2791,8 @@ export type Query = {
   peerCampaign: PeerCampaign;
   peerCampaigns: PeerCampaignConnection;
   plan?: Maybe<Plan>;
+  privacyDefinition: PrivacyDefinition;
+  privacyDefinitions: PrivacyDefinitionConnection;
   project: Project;
   projects: ProjectConnection;
   redirect: Redirect;
@@ -2390,6 +2896,17 @@ export type QueryCampaignArgs = {
 };
 
 
+export type QueryCampaignCommentArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryCampaignCommentsArgs = {
+  filters?: InputMaybe<CampaignCommentsFilters>;
+  pagination?: InputMaybe<PaginationInput>;
+};
+
+
 export type QueryCampaignTagsArgs = {
   pagination?: InputMaybe<PaginationInput>;
   q?: InputMaybe<Scalars['String']>;
@@ -2430,6 +2947,17 @@ export type QueryCountriesArgs = {
 };
 
 
+export type QueryCustomfieldDefinitionArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryCustomfieldDefinitionsArgs = {
+  filters?: InputMaybe<CustomFieldFilters>;
+  pagination?: InputMaybe<PaginationInput>;
+};
+
+
 export type QueryDomainArgs = {
   id: Scalars['Int'];
 };
@@ -2460,6 +2988,11 @@ export type QueryFormArgs = {
 export type QueryFormsArgs = {
   filters?: InputMaybe<FormFilters>;
   pagination?: InputMaybe<PaginationInput>;
+};
+
+
+export type QueryInviteArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -2495,6 +3028,12 @@ export type QueryMenuByHandleArgs = {
 
 export type QueryNotificationArgs = {
   code: NotificationCode;
+  id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryNotificationsArgs = {
+  filters?: InputMaybe<NotificationFilters>;
 };
 
 
@@ -2538,6 +3077,17 @@ export type QueryPeerCampaignArgs = {
 
 export type QueryPeerCampaignsArgs = {
   filters?: InputMaybe<PeerCampaignFilters>;
+  pagination?: InputMaybe<PaginationInput>;
+};
+
+
+export type QueryPrivacyDefinitionArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryPrivacyDefinitionsArgs = {
+  filters?: InputMaybe<PrivacyDefinitionFilters>;
   pagination?: InputMaybe<PaginationInput>;
 };
 
@@ -2826,11 +3376,14 @@ export type Staff = {
   email: Scalars['String'];
   id: Scalars['Int'];
   isOwner: Scalars['Boolean'];
+  lang: Scalars['String'];
   lastLoginDate?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   partnerId?: Maybe<Scalars['Int']>;
+  permissions: Array<StaffPermission>;
   role: StaffRole;
   state: StaffStatus;
+  timezone: Scalars['String'];
   userId?: Maybe<Scalars['Int']>;
 };
 
@@ -2861,6 +3414,32 @@ export type StaffInviteFilters = {
   state?: InputMaybe<StaffInvitationStatus>;
   type?: InputMaybe<StaffInvitationType>;
 };
+
+export enum StaffPermission {
+  ActivityRead = 'ACTIVITY_READ',
+  ActivityWrite = 'ACTIVITY_WRITE',
+  ApplicationInstall = 'APPLICATION_INSTALL',
+  ApplicationRead = 'APPLICATION_READ',
+  CampaignRead = 'CAMPAIGN_READ',
+  CampaignWrite = 'CAMPAIGN_WRITE',
+  DboxRead = 'DBOX_READ',
+  DboxWrite = 'DBOX_WRITE',
+  DonationExport = 'DONATION_EXPORT',
+  DonationRead = 'DONATION_READ',
+  DonationWrite = 'DONATION_WRITE',
+  PaymentRead = 'PAYMENT_READ',
+  PaymentWrite = 'PAYMENT_WRITE',
+  ProjectRead = 'PROJECT_READ',
+  ProjectWrite = 'PROJECT_WRITE',
+  ReportsRead = 'REPORTS_READ',
+  SitefrontContent = 'SITEFRONT_CONTENT',
+  SitefrontNavigation = 'SITEFRONT_NAVIGATION',
+  SitefrontThemes = 'SITEFRONT_THEMES',
+  SitefrontThemesCode = 'SITEFRONT_THEMES_CODE',
+  SupporterExport = 'SUPPORTER_EXPORT',
+  SupporterRead = 'SUPPORTER_READ',
+  SupporterWrite = 'SUPPORTER_WRITE'
+}
 
 export type StaffResponse = {
   __typename?: 'StaffResponse';
@@ -2980,7 +3559,8 @@ export type StripeTerminal = {
   __typename?: 'StripeTerminal';
   id: Scalars['String'];
   label: Scalars['String'];
-  location: StripeTerminalLocation;
+  location?: Maybe<StripeTerminalLocation>;
+  locationId?: Maybe<Scalars['String']>;
   serialNumber: Scalars['String'];
   status: Scalars['String'];
 };
@@ -2998,16 +3578,6 @@ export type StripeTerminalLocation = {
   terminalCount: Scalars['Int'];
 };
 
-export enum SubscriptionStatus {
-  Active = 'ACTIVE',
-  Canceled = 'CANCELED',
-  Incomplete = 'INCOMPLETE',
-  IncompleteExpired = 'INCOMPLETE_EXPIRED',
-  PastDue = 'PAST_DUE',
-  Trialing = 'TRIALING',
-  Unpaid = 'UNPAID'
-}
-
 export type Supporter = {
   __typename?: 'Supporter';
   activeRegularDonations: Array<Donation>;
@@ -3020,6 +3590,7 @@ export type Supporter = {
   code: Scalars['String'];
   country?: Maybe<Scalars['String']>;
   createDate: Scalars['DateTime'];
+  customfields: Array<CustomField>;
   dateOfBirth?: Maybe<Scalars['Date']>;
   email?: Maybe<Scalars['String']>;
   emailMarketing?: Maybe<Scalars['Boolean']>;
@@ -3039,9 +3610,13 @@ export type Supporter = {
   postalCode?: Maybe<Scalars['String']>;
   postalMarketing?: Maybe<Scalars['Boolean']>;
   privacy?: Maybe<Scalars['Boolean']>;
+  privacyValues: Array<SupporterPrivacyValue>;
+  profilationMarketing?: Maybe<Scalars['Boolean']>;
   savedCards: Array<StripeCard>;
   sex?: Maybe<Sex>;
   smsMarketing?: Maybe<Scalars['Boolean']>;
+  sourceCampaign?: Maybe<Campaign>;
+  sourcePeerCampaign?: Maybe<PeerCampaign>;
   ssn?: Maybe<Scalars['String']>;
   stripeCustomerId?: Maybe<Scalars['String']>;
   supporterType?: Maybe<SupporterType>;
@@ -3079,6 +3654,7 @@ export type SupporterFiltersInput = {
   city?: InputMaybe<Scalars['String']>;
   country?: InputMaybe<Scalars['String']>;
   createDate?: InputMaybe<DateRange>;
+  customfields?: InputMaybe<Array<CustomFieldEntityFilter>>;
   dateOfBirth?: InputMaybe<DateRange>;
   email?: InputMaybe<Scalars['String']>;
   emailMarketing?: InputMaybe<Scalars['Boolean']>;
@@ -3092,9 +3668,12 @@ export type SupporterFiltersInput = {
   isRegularSupporter?: InputMaybe<Scalars['Boolean']>;
   lastDonationDate?: InputMaybe<DateRange>;
   order?: InputMaybe<Scalars['String']>;
+  peerCampaigns?: InputMaybe<Array<Scalars['Int']>>;
   phoneMarketing?: InputMaybe<Scalars['Boolean']>;
   placeOfBirth?: InputMaybe<Scalars['String']>;
   postalMarketing?: InputMaybe<Scalars['Boolean']>;
+  privacyValues?: InputMaybe<Array<Scalars['String']>>;
+  profilationMarketing?: InputMaybe<Scalars['Boolean']>;
   q?: InputMaybe<Scalars['String']>;
   query?: InputMaybe<Scalars['String']>;
   sex?: InputMaybe<SexFilter>;
@@ -3104,6 +3683,7 @@ export type SupporterFiltersInput = {
   totalDonated?: InputMaybe<IntRange>;
   totalDonations?: InputMaybe<IntRange>;
   type?: InputMaybe<SupporterType>;
+  updateDate?: InputMaybe<DateRange>;
 };
 
 export type SupporterInput = {
@@ -3113,6 +3693,7 @@ export type SupporterInput = {
   certificationUrl?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   country?: InputMaybe<Scalars['String']>;
+  customfields?: InputMaybe<Array<CustomFieldInput>>;
   dateOfBirth?: InputMaybe<Scalars['Date']>;
   email?: InputMaybe<Scalars['String']>;
   emailMarketing?: InputMaybe<Scalars['Boolean']>;
@@ -3129,13 +3710,37 @@ export type SupporterInput = {
   placeOfBirth?: InputMaybe<Scalars['String']>;
   postalCode?: InputMaybe<Scalars['String']>;
   postalMarketing?: InputMaybe<Scalars['Boolean']>;
+  privacyValues?: InputMaybe<Array<SupporterPrivacyInput>>;
+  profilationMarketing?: InputMaybe<Scalars['Boolean']>;
   sex?: InputMaybe<Sex>;
   smsMarketing?: InputMaybe<Scalars['Boolean']>;
+  sourceCampaignId?: InputMaybe<Scalars['Int']>;
+  sourcePeerCampaignId?: InputMaybe<Scalars['Int']>;
   ssn?: InputMaybe<Scalars['String']>;
   supporterType?: InputMaybe<SupporterType>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   title?: InputMaybe<Scalars['String']>;
   vat?: InputMaybe<Scalars['String']>;
+};
+
+export type SupporterPrivacyInput = {
+  code: Scalars['String'];
+  date?: InputMaybe<Scalars['String']>;
+  value: Scalars['Boolean'];
+};
+
+export type SupporterPrivacyValue = {
+  __typename?: 'SupporterPrivacyValue';
+  code: Scalars['String'];
+  date?: Maybe<Scalars['DateTime']>;
+  label: Scalars['String'];
+  value: Scalars['Boolean'];
+};
+
+export type SupporterResponse = {
+  __typename?: 'SupporterResponse';
+  supporter?: Maybe<Supporter>;
+  userErrors?: Maybe<Array<UserError>>;
 };
 
 export enum SupporterType {
@@ -3210,6 +3815,19 @@ export type ThemeInput = {
   version: Scalars['String'];
 };
 
+export type ThemeUploadError = {
+  __typename?: 'ThemeUploadError';
+  error: Scalars['String'];
+  path: Scalars['String'];
+};
+
+export type ThemeUploadResponse = {
+  __typename?: 'ThemeUploadResponse';
+  errors: Array<ThemeUploadError>;
+  success: Scalars['Boolean'];
+  theme?: Maybe<Theme>;
+};
+
 export type ThemesFiltersInput = {
   isDevelopment?: Scalars['Boolean'];
   isPublished?: Scalars['Boolean'];
@@ -3279,9 +3897,10 @@ export type Totem = {
   __typename?: 'Totem';
   campaignId?: Maybe<Scalars['Int']>;
   cover?: Maybe<Media>;
+  customText: Scalars['JSON'];
   deviceId: Scalars['String'];
+  flowType: FlowType;
   id: Scalars['Int'];
-  mandatorySupporter: Scalars['Boolean'];
   name: Scalars['String'];
   terminal?: Maybe<StripeTerminal>;
   terminalId: Scalars['String'];
@@ -3302,8 +3921,9 @@ export type TotemEdge = {
 export type TotemInput = {
   campaignId?: InputMaybe<Scalars['Int']>;
   coverId?: InputMaybe<Scalars['Int']>;
+  customText?: InputMaybe<Scalars['JSON']>;
   deviceId: Scalars['String'];
-  mandatorySupporter?: Scalars['Boolean'];
+  flowType?: FlowType;
   name: Scalars['String'];
   terminalId: Scalars['String'];
 };

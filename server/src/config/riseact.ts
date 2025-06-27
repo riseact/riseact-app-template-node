@@ -10,18 +10,20 @@ const RiseactConfig: RiseactConfig = {
   auth: {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
+  },
 
-    redirectUri: process.env.RISEACT_APP_URL + '/oauth/callback',
+  network: {
+    appPublicUrl: process.env.RISEACT_APP_URL,
   },
 
   // Provide a method to manage the credentials for the organizations to RiseactSDK.
   // The storage type are:
-  // - 'memory': The credentials will be stored in memory. This is not recommended for production!
-  // - 'sqlite': The credentials will be stored in a SQLite database. This is ideal if you don't need a database for your application.
-  // - 'custom': You can provide your own methods to manage the credentials. In this example, we use Prisma to manage the credentials in a SQLite database.
+  // - 'memory': The credentials will be stored in memory for development purposes only
+  // - 'file': The credentials will be stored in a file
+  // - 'custom': You can provide your own methods to manage the credentials. In this example, we use Prisma to manage the credentials in a database.
   storage: {
     type: 'custom',
-    custom: {
+    adapters: {
       getCredentialsByClientToken: async (clientToken) => {
         const credentials = await prisma.organizationCredentials.findFirst({
           where: {
@@ -31,22 +33,29 @@ const RiseactConfig: RiseactConfig = {
 
         return credentials;
       },
-      getCredentialsByOrganizationId: async (organizationId) => {
+      getCredentialsByOrganizationDomain: async (organizationDomain) => {
         const credentials = await prisma.organizationCredentials.findUnique({
           where: {
-            organizationId,
+            organizationDomain,
           },
         });
 
         return credentials;
       },
-      saveCredentials: async (credentials) => {
+      setCredentials: async (credentials) => {
         await prisma.organizationCredentials.upsert({
           where: {
-            organizationId: credentials.organizationId,
+            organizationDomain: credentials.organizationDomain,
           },
           update: credentials,
           create: credentials,
+        });
+      },
+      removeCredentials: async (organizationDomain) => {
+        await prisma.organizationCredentials.delete({
+          where: {
+            organizationDomain,
+          },
         });
       },
     },

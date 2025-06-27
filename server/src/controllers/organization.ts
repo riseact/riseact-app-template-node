@@ -12,11 +12,8 @@ import { RequestHandler } from 'express';
 export const OrganizationInfoHandler =
   (riseact: RiseactInstance): RequestHandler<null, OrganizationInfoResponseBody, null> =>
   async (req, res) => {
-    // Get the user from the request
-    const user = req.user;
-
     // Create a GraphQL client for the user's organization
-    const graphqlClient = await riseact.network.createGqlClient(user.organizationId);
+    const graphqlClient = await riseact.network.createGqlClient(req.organizationDomain);
 
     // Get the organization type from the common package
     const { data, error } = await graphqlClient.query<OrganizationInfoResponseQuery>({
@@ -30,7 +27,6 @@ export const OrganizationInfoHandler =
 
     // Return the organization data
     res.json({
-      id: user.organizationId,
       name: data.organization.name,
       logoUrl: data.organization.logo?.square,
     });
@@ -39,13 +35,10 @@ export const OrganizationInfoHandler =
 // Get the organization client token from DB. This is useless, but it shows how to use your prisma client.
 export const OrganizationCredentialsHandler =
   (): RequestHandler<null, OrganizationCredentialsResponseBody, null> => async (req, res) => {
-    // Get the user from the request
-    const user = req.user;
-
     // Get the organization credentials from the database
     const credentials = await prisma.organizationCredentials.findUnique({
       where: {
-        organizationId: user.organizationId,
+        organizationDomain: req.organizationDomain,
       },
     });
 
@@ -56,6 +49,6 @@ export const OrganizationCredentialsHandler =
     // Return the organization data
     res.json({
       clientToken: credentials.clientToken,
-      organizationId: user.organizationId,
+      organizationDomain: credentials.organizationDomain,
     });
   };

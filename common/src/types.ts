@@ -11,12 +11,11 @@ export type OrganizationInfoResponseQuery = {
 };
 
 export interface OrganizationInfoResponseBody {
-  id: number;
   name: string;
   logoUrl: string;
 }
 
 export interface OrganizationCredentialsResponseBody {
-  organizationId: number;
+  organizationDomain: string;
   clientToken: string;
 }

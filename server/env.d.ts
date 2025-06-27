@@ -1,3 +1,5 @@
+import '@riseact/riseact-node-sdk/lib/TypeExtensions';
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -5,16 +7,6 @@ declare global {
       CLIENT_ID: string;
       CLIENT_SECRET: string;
       RISEACT_APP_URL: string;
-    }
-  }
-
-  namespace Express {
-    interface Request {
-      user: {
-        organizationSlug: string;
-        organizationId: number;
-        clientToken: string;
-      };
     }
   }
 }
